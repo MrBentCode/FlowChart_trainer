@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/">
+        <file>resources/icon_action.png</file>
+        <file>resources/icon_divar.png</file>
+        <file>resources/icon_input.png</file>
+        <file>resources/icon_ostfix.png</file>
+        <file>resources/icon_output.png</file>
+        <file>resources/icon_parameter.png</file>
+        <file>resources/icon_prefix.png</file>
+        <file>resources/icon_arrow_right.png</file>
+        <file>resources/icon_arrow_right_1.png</file>
+        <file>resources/icon_arrow_left_1.png</file>
+    </qresource>
+</RCC>
