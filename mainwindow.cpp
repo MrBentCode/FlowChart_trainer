@@ -8,7 +8,7 @@
 QString line_stream(std::string tempLine, bool in){
     QString str;
     //std::string tempLine = line.toStdString();
-    std::string tempStr;
+    std::string tempStr = tempLine;
     int n = 0;
     while (tempLine.find(",") > 0 && tempLine.find(",") < tempLine.size()){
         n = tempLine.find(",");
