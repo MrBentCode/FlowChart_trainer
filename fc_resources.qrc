@@ -17,5 +17,7 @@
         <file>resources/menu_icons/pencilstraight.png</file>
         <file>resources/menu_icons/photos.png</file>
         <file>resources/menu_icons/plus.png</file>
+        <file>resources/arrowleft.png</file>
+        <file>resources/arrowright.png</file>
     </qresource>
 </RCC>
