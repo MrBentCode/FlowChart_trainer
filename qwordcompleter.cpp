@@ -5,9 +5,10 @@
 #include <QTextEdit>
 #include <QTextCursor>
 
-QWordCompleter::QWordCompleter(const QStringList &completions, QObject *parent):
+QWordCompleter::QWordCompleter(const QStringList &completions, QObject *parent, QString name):
     QCompleter(completions, parent)
 {
+    this->name = name;
 }
 
 bool QWordCompleter::eventFilter(QObject *o, QEvent *e)
@@ -56,12 +57,19 @@ void QWordCompleter::setMinCompletionPrefixLength(int value)
     minCompletionPrefixLength = value;
 }
 
+void QWordCompleter::setName(QString name)
+{
+    this->name = name;
+}
+
 void QWordCompleter::replaceCurrentWord(QString text)
 {
     QTextEdit* textEdit = qobject_cast<QTextEdit*>(widget());
     QTextCursor textCursor = textEdit->textCursor();
     textCursor.movePosition(QTextCursor::StartOfWord);
     textCursor.movePosition(QTextCursor::EndOfWord, QTextCursor::KeepAnchor);
+    if (text == "void") text += " " + name + "() {\n\n}";
+    else if (text == "if") text += " ( ) {\n\n} else {\n\n}";
     textCursor.insertText(text);
     textEdit->setTextCursor(textCursor);
 }

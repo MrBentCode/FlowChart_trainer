@@ -53,6 +53,7 @@ private slots:
     void startExercise();
     void endExercise();
     void showTheory();
+    void changeFunctionName(QString name);
 
 private:
     bool pressed;
@@ -66,7 +67,7 @@ private:
     QTextBrowser *theoryBrowser;
     QString theory;
     QString html;
-    QCompleter* completer;
+    QWordCompleter* completer;
 
     void createActions();
     void createMenus();

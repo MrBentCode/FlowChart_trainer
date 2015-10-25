@@ -78,7 +78,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->scrollArea->setPalette(Pal);
 
     QStringList keywords;
-    keywords << "int" << "double" << "void" << "cin" << "cout";
+    keywords << "int" << "double" << "void" << "cin" << "cout" << "if";
     completer = new QWordCompleter(keywords, this);
     completer->setCaseSensitivity(Qt::CaseInsensitive);
     completer->setWidget(ui->textEdit);
@@ -92,6 +92,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->checkBox_newLine, SIGNAL(clicked()), SLOT(translate()));
     connect(ui->code_font_slider, SIGNAL(valueChanged(int)), SLOT(changeFontSize(int)));
     connect(ui->checkBox, SIGNAL(toggled(bool)), wdg, SLOT(HideTexts(bool)));
+    connect(this, SIGNAL(windowTitleChanged(QString)), SLOT(changeFunctionName(QString)));
 }
 
 MainWindow::~MainWindow()
@@ -250,6 +251,11 @@ void MainWindow::loadFlowChart(Block_Widget *widget, QDomNode &node, bool isMain
         //
         domNode = domNode.nextSibling();
     }
+}
+
+bool MainWindow::isCorrectedPunctuation(QString text)
+{
+
 }
 
 /*
@@ -727,6 +733,14 @@ void MainWindow::showTheory()
         theoryBrowser->show();
     }
 
+}
+
+void MainWindow::changeFunctionName(QString name)
+{
+    QString sEnding = QString::fromStdString(name.toStdString().substr(name.length() - 4, 4).c_str());
+    if (sEnding.contains(".xml"))
+        name = QString::fromStdString(name.toStdString().substr(0, name.length()-4).c_str());
+    completer->setName(name);
 }
 
 void MainWindow::loadFile(const QString &fileName) //Открытие файла
