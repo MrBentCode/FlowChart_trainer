@@ -125,6 +125,7 @@ void MainWindow::onRadioButtonCheck() {
             radioButtons[i]->setStyleSheet("QRadioButton::indicator { width: 0px; height: 0px }");
         }
     }
+    connect(ui->translate_button_back, SIGNAL(clicked()), SLOT(translateBack()));
 }
 
 MainWindow::~MainWindow()
@@ -285,10 +286,24 @@ void MainWindow::loadFlowChart(Block_Widget *widget, QDomNode &node, bool isMain
     }
 }
 
-//bool MainWindow::isCorrectedPunctuation(QString text)
-//{
 
-//}
+bool MainWindow::isCorrectedPunctuation()
+{
+    int RBrack = 0, LBRack = 0, RFigureBrack = 0, LFigureBrack = 0;
+    QString text = ui->textEdit->toPlainText();
+    for(int i = 0; i < text.length(); i++)
+    {
+        if(text[i] == '(')
+            LBRack++;
+        else if(text[i] == ')')
+            RBrack++;
+        else if(text[i] == '{')
+            LFigureBrack++;
+        else if(text[i] == '}')
+            RFigureBrack++;
+    }
+    return (LBRack == RBrack && LFigureBrack == RFigureBrack);
+}
 
 /*
 void MainWindow::saveSlot()
@@ -773,6 +788,11 @@ void MainWindow::changeFunctionName(QString name)
     if (sEnding.contains(".xml"))
         name = QString::fromStdString(name.toStdString().substr(0, name.length()-4).c_str());
     completer->setName(name);
+}
+
+void MainWindow::translateBack()
+{
+    qDebug() << isCorrectedPunctuation();
 }
 
 void MainWindow::loadFile(const QString &fileName) //Открытие файла
