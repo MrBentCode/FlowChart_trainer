@@ -2,12 +2,14 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QVector>
 #include "fc_widget.h"
 #include <QGridLayout>
 #include <QVBoxLayout>
 #include <QtXml>
 #include <QFileDialog>
 #include <QTextBrowser>
+#include <QRadioButton>
 //#include <QWebView>
 #include "testwindow.h"
 #include "exercisewindow.h"
@@ -38,6 +40,7 @@ protected:
     void closeEvent(QCloseEvent *event);
 
 private slots:
+    void onRadioButtonCheck();
     void newFile();
     void open();
     bool save();
@@ -70,6 +73,7 @@ private:
     QString theory;
     QString html;
     QWordCompleter* completer;
+    QVector<QRadioButton *> radioButtons;
 
     void createActions();
     void createMenus();

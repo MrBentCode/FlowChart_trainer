@@ -59,7 +59,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->widget_3->hide();
     //ui->textEdit->hide();
     ui->code_viewer_widget->hide();
-    myName = "Есеркепов Андрей";
+    myName = "Вася Пупкин";
     programVersion = "0.1";
     openFromNewLine = ui->checkBox_newLine->isChecked();
     ui->textEdit->setFont(QFont("Courier", 10));
@@ -94,6 +94,38 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->code_font_slider, SIGNAL(valueChanged(int)), SLOT(changeFontSize(int)));
     connect(ui->checkBox, SIGNAL(toggled(bool)), wdg, SLOT(HideTexts(bool)));
     connect(this, SIGNAL(windowTitleChanged(QString)), SLOT(changeFunctionName(QString)));
+
+    radioButtons.push_back(ui->radio_action);
+    radioButtons.push_back(ui->radio_Divar);
+    radioButtons.push_back(ui->radio_input);
+    radioButtons.push_back(ui->radio_output);
+    radioButtons.push_back(ui->radio_param_cycle);
+    radioButtons.push_back(ui->radio_postfix_cycle);
+    radioButtons.push_back(ui->radio_prefix_cycle);
+
+    for(int i = 0; i < radioButtons.size(); i++) {
+        radioButtons[i]->setStyleSheet("QRadioButton::indicator { width: 0px; height: 0px }");
+    }
+
+    connect(ui->radio_action, SIGNAL(released()), this, SLOT(onRadioButtonCheck()));
+    connect(ui->radio_Divar, SIGNAL(released()), this, SLOT(onRadioButtonCheck()));
+    connect(ui->radio_input, SIGNAL(released()), this, SLOT(onRadioButtonCheck()));
+    connect(ui->radio_output, SIGNAL(released()), this, SLOT(onRadioButtonCheck()));
+    connect(ui->radio_param_cycle, SIGNAL(released()), this, SLOT(onRadioButtonCheck()));
+    connect(ui->radio_postfix_cycle, SIGNAL(released()), this, SLOT(onRadioButtonCheck()));
+    connect(ui->radio_prefix_cycle, SIGNAL(released()), this, SLOT(onRadioButtonCheck()));
+}
+
+void MainWindow::onRadioButtonCheck() {
+    for (int i = 0; i < radioButtons.size(); i++) {
+        if (radioButtons[i]->isChecked()) {
+            radioButtons[i]->setStyleSheet("QRadioButton::indicator { width: 0px; height: 0px } "
+                                           "QRadioButton { border: 3px solid #aaa; } ");
+        }
+        else {
+            radioButtons[i]->setStyleSheet("QRadioButton::indicator { width: 0px; height: 0px }");
+        }
+    }
     connect(ui->translate_button_back, SIGNAL(clicked()), SLOT(translateBack()));
 }
 
@@ -254,6 +286,7 @@ void MainWindow::loadFlowChart(Block_Widget *widget, QDomNode &node, bool isMain
         domNode = domNode.nextSibling();
     }
 }
+
 
 bool MainWindow::isCorrectedPunctuation()
 {
