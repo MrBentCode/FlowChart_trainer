@@ -77,6 +77,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->scrollArea->setAutoFillBackground(true);
     ui->scrollArea->setPalette(Pal);
 
+    QStringList keywords;
+    keywords << "int" << "double" << "void" << "cin" << "cout";
+    completer = new QWordCompleter(keywords, this);
+    completer->setCaseSensitivity(Qt::CaseInsensitive);
+    completer->setWidget(ui->textEdit);
+    connect(completer, SIGNAL(activated(QString)), completer, SLOT(replaceCurrentWord(QString)));
+
+
     makeFlowChart();
     //connect(wdg, SIGNAL(modified()), this, SLOT(translate()));
     connect(ui->show_hide_button, SIGNAL(clicked()), SLOT(showCodeWidget()));

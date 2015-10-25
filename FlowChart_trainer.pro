@@ -18,13 +18,15 @@ SOURCES += main.cpp\
     fc_widget.cpp \
     inputdialog.cpp \
     testwindow.cpp \
-    exercisewindow.cpp
+    exercisewindow.cpp \
+    qwordcompleter.cpp
 
 HEADERS  += mainwindow.h \
     fc_widget.h \
     inputdialog.h \
     testwindow.h \
-    exercisewindow.h
+    exercisewindow.h \
+    qwordcompleter.h
 
 FORMS    += mainwindow.ui \
     testwindow.ui \
