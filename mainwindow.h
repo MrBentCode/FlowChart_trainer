@@ -32,7 +32,7 @@ public:
     void makeFlowChart();
     void loadFlowChart(Block_Widget *widget, QDomNode &node, bool isMain = false, bool delBottom = true);
     bool isCorrectedPunctuation();
-
+    QDomElement codeToXML(QString text, QDomDocument &doc, QDomElement &domElement, QVector<QString> vector);
 public slots:
     //void saveSlot();
 

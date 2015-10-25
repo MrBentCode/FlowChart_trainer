@@ -18,6 +18,15 @@
     <item>
      <widget class="QWidget" name="widget" native="true">
       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="spacing">
+        <number>3</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item>
         <widget class="QRadioButton" name="radio_action">
          <property name="toolTip">
@@ -30,7 +39,7 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset resource="fc_resources.qrc">
+          <iconset>
            <normaloff>:/resources/icon_action.png</normaloff>:/resources/icon_action.png</iconset>
          </property>
          <property name="iconSize">
@@ -59,7 +68,7 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset resource="fc_resources.qrc">
+          <iconset>
            <normaloff>:/resources/icon_input.png</normaloff>:/resources/icon_input.png</iconset>
          </property>
          <property name="iconSize">
@@ -79,7 +88,7 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset resource="fc_resources.qrc">
+          <iconset>
            <normaloff>:/resources/icon_output.png</normaloff>:/resources/icon_output.png</iconset>
          </property>
          <property name="iconSize">
@@ -99,7 +108,7 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset resource="fc_resources.qrc">
+          <iconset>
            <normaloff>:/resources/icon_divar.png</normaloff>:/resources/icon_divar.png</iconset>
          </property>
          <property name="iconSize">
@@ -119,7 +128,7 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset resource="fc_resources.qrc">
+          <iconset>
            <normaloff>:/resources/icon_prefix.png</normaloff>:/resources/icon_prefix.png</iconset>
          </property>
          <property name="iconSize">
@@ -142,7 +151,7 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset resource="fc_resources.qrc">
+          <iconset>
            <normaloff>:/resources/icon_ostfix.png</normaloff>:/resources/icon_ostfix.png</iconset>
          </property>
          <property name="iconSize">
@@ -162,7 +171,7 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset resource="fc_resources.qrc">
+          <iconset>
            <normaloff>:/resources/icon_parameter.png</normaloff>:/resources/icon_parameter.png</iconset>
          </property>
          <property name="iconSize">
@@ -266,7 +275,7 @@
        <string/>
       </property>
       <property name="icon">
-       <iconset resource="fc_resources.qrc">
+       <iconset>
         <normaloff>:/resources/icon_arrow_left_1.png</normaloff>:/resources/icon_arrow_left_1.png</iconset>
       </property>
       <property name="iconSize">
@@ -292,7 +301,7 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset resource="fc_resources.qrc">
+          <iconset>
            <normaloff>:/resources/arrowleft.png</normaloff>:/resources/arrowleft.png</iconset>
          </property>
          <property name="iconSize">
@@ -315,7 +324,7 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset resource="fc_resources.qrc">
+          <iconset>
            <normaloff>:/resources/arrowright.png</normaloff>:/resources/arrowright.png</iconset>
          </property>
          <property name="iconSize">
@@ -409,8 +418,6 @@
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources>
-  <include location="fc_resources.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

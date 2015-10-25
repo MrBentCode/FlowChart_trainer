@@ -4,6 +4,7 @@
 #include <QMessageBox>
 #include <QTextCodec>
 #include <fstream>
+#include <iostream>
 
 QString line_stream(std::string tempLine, bool in){
     QString str;
@@ -94,6 +95,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->code_font_slider, SIGNAL(valueChanged(int)), SLOT(changeFontSize(int)));
     connect(ui->checkBox, SIGNAL(toggled(bool)), wdg, SLOT(HideTexts(bool)));
     connect(this, SIGNAL(windowTitleChanged(QString)), SLOT(changeFunctionName(QString)));
+    connect(ui->translate_button_back, SIGNAL(clicked()), SLOT(translateBack()));
 
     radioButtons.push_back(ui->radio_action);
     radioButtons.push_back(ui->radio_Divar);
@@ -306,9 +308,28 @@ bool MainWindow::isCorrectedPunctuation()
     return (LBRack == RBrack && LFigureBrack == RFigureBrack);
 }
 
-void MainWindow::codeToXML(QString text, QDomDocument &doc)
+QDomElement MainWindow::codeToXML(QString text, QDomDocument &doc, QDomElement &domElement, QVector<QString> vector)
 {
+    int i = 0;
+    QDomElement element = doc.createElement("BlockBegin_Widget");
+    QString tag = "BlockAction_Widget";
+    QString line;
+    domElement.appendChild(element);
 
+    for (int i = 1; i < vector.length(); i++) {
+        if (vector[i] != "") {
+            QDomAttr attr = doc.createAttribute("text");
+            line = vector[i];
+            if (line.contains(";")) line = QString::fromStdString(line.toStdString().substr(0, line.length()-1));
+            attr.setValue(line);
+            element = doc.createElement(tag);
+            element.setAttributeNode(attr);
+            domElement.appendChild(element);
+        }
+    }
+    element = doc.createElement("BlockEnd_Widget");
+    domElement.appendChild(element);
+    return domElement;
 }
 
 /*
@@ -798,10 +819,45 @@ void MainWindow::changeFunctionName(QString name)
 
 void MainWindow::translateBack()
 {
-    QDomDocument doc;
-    QDomElement domElement = codeToXML();
+    qDebug()<<"LOL";
+    QString text = ui->textEdit->toPlainText();
+    QString line = "";
+    QString name = "";
+
+    QVector <QString> vector;
+    for(int i = 0; i < text.length(); i++)
+    {
+        if(text[i] != '\n')
+        {
+            line+= text[i];
+        }
+        else
+        {
+            vector.push_back(line);
+            line = "";
+        }
+
+    }
+    for(int i = 0; i < vector.size(); i++)
+    {
+        qDebug() << vector[i];
+    }
+    name = vector[0];
+    int n1 = 0, n2 = 0;
+    n1 = name.toStdString().find_first_of(" ") + 1;
+    n2 = name.toStdString().find_first_of("(");
+    n2 -= n1;
+    name = QString::fromStdString(name.toStdString().substr(n1, n2));
+    QDomDocument doc(name);
+    QDomElement domElement;
+
+    domElement = doc.createElement(line);
+    domElement = codeToXML(text, doc, domElement, vector);
     doc.appendChild(domElement);
+
     loadFlowChart(wdg, domElement, true);
+    //setWindowTitle(name);
+
 }
 
 void MainWindow::loadFile(const QString &fileName) //Открытие файла
