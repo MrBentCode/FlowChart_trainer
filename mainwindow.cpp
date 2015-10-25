@@ -55,7 +55,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     ui->scrollArea->setWidgetResizable(false);
     isToShowCode = false;
-    ui->translate_button->hide();
+    //ui->translate_button->hide();
+    ui->widget_3->hide();
     //ui->textEdit->hide();
     ui->code_viewer_widget->hide();
     myName = "Есеркепов Андрей";
@@ -270,6 +271,11 @@ bool MainWindow::isCorrectedPunctuation()
             RFigureBrack++;
     }
     return (LBRack == RBrack && LFigureBrack == RFigureBrack);
+}
+
+void MainWindow::codeToXML(QString text, QDomDocument &doc)
+{
+
 }
 
 /*
@@ -664,13 +670,13 @@ void MainWindow::showCodeWidget()
 {
     isToShowCode = !isToShowCode;
     if (isToShowCode){
-        ui->translate_button->show();
+        ui->widget_3->show();
         //ui->textEdit->show();
         ui->code_viewer_widget->show();
         ui->show_hide_button->setIcon(QIcon(":/resources/icon_arrow_right_1.png"));
     }
     else {
-        ui->translate_button->hide();
+        ui->widget_3->hide();
         //ui->textEdit->hide();
         ui->code_viewer_widget->hide();
         ui->show_hide_button->setIcon(QIcon(":/resources/icon_arrow_left_1.png"));
@@ -759,7 +765,10 @@ void MainWindow::changeFunctionName(QString name)
 
 void MainWindow::translateBack()
 {
-    qDebug() << isCorrectedPunctuation();
+    QDomDocument doc;
+    QDomElement domElement = codeToXML();
+    doc.appendChild(domElement);
+    loadFlowChart(wdg, domElement, true);
 }
 
 void MainWindow::loadFile(const QString &fileName) //Открытие файла
