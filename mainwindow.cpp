@@ -312,12 +312,23 @@ QDomElement MainWindow::codeToXML(QString text, QDomDocument &doc, QDomElement &
 {
     int i = 0;
     QDomElement element = doc.createElement("BlockBegin_Widget");
-    QString tag = "BlockAction_Widget";
     QString line;
     domElement.appendChild(element);
 
     for (int i = 1; i < vector.length(); i++) {
         if (vector[i] != "") {
+            QString tag;
+            if (vector[i].indexOf("cin") != -1) {
+                vector[i] = vector[i].replace(0, 6, "");
+                tag = "BlockInput_Widget";
+            }
+            else if (vector[i].indexOf("cout") != -1) {
+                vector[i] = vector[i].replace(0, 7, "");
+                tag = "BlockOutput_Widget";
+            }
+            else {
+                tag = "BlockAction_Widget";
+            }
             QDomAttr attr = doc.createAttribute("text");
             line = vector[i];
             if (line.contains(";")) line = QString::fromStdString(line.toStdString().substr(0, line.length()-1));
