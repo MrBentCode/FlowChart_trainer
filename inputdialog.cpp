@@ -10,6 +10,7 @@ InputDialog::InputDialog(QString text, QWidget* parent/* = 0*/): QDialog(parent,
     QLabel* label = new QLabel("&Text");
     label->setBuddy(label);
 
+    line->setMaxLength(20);
     QPushButton* pcmdOk     = new QPushButton("&Ok");
     QPushButton* pcmdCancel = new QPushButton("&Cancel");
     pcmdDelete = new QPushButton("Удалить блок");

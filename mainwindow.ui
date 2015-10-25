@@ -20,6 +20,9 @@
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <widget class="QRadioButton" name="radio_action">
+         <property name="toolTip">
+          <string>Блок действия</string>
+         </property>
          <property name="autoFillBackground">
           <bool>false</bool>
          </property>
@@ -49,6 +52,9 @@
        </item>
        <item>
         <widget class="QRadioButton" name="radio_input">
+         <property name="toolTip">
+          <string>Блок ввода</string>
+         </property>
          <property name="text">
           <string/>
          </property>
@@ -66,6 +72,9 @@
        </item>
        <item>
         <widget class="QRadioButton" name="radio_output">
+         <property name="toolTip">
+          <string>Блок вывода</string>
+         </property>
          <property name="text">
           <string/>
          </property>
@@ -83,6 +92,9 @@
        </item>
        <item>
         <widget class="QRadioButton" name="radio_Divar">
+         <property name="toolTip">
+          <string>Развилка</string>
+         </property>
          <property name="text">
           <string/>
          </property>
@@ -100,6 +112,9 @@
        </item>
        <item>
         <widget class="QRadioButton" name="radio_prefix_cycle">
+         <property name="toolTip">
+          <string>Цикл с предусловием</string>
+         </property>
          <property name="text">
           <string/>
          </property>
@@ -117,6 +132,9 @@
        </item>
        <item>
         <widget class="QRadioButton" name="radio_postfix_cycle">
+         <property name="toolTip">
+          <string>Цикл с постусловием</string>
+         </property>
          <property name="autoFillBackground">
           <bool>false</bool>
          </property>
@@ -137,6 +155,9 @@
        </item>
        <item>
         <widget class="QRadioButton" name="radio_param_cycle">
+         <property name="toolTip">
+          <string>Цикл с параметром</string>
+         </property>
          <property name="text">
           <string/>
          </property>

@@ -25,6 +25,7 @@ ExerciseWindow::ExerciseWindow(QWidget *parent) :
     connect(ui->pushButton, SIGNAL(clicked()), SLOT(checkExercise()));
     connect(ui->checkBox_newLine, SIGNAL(clicked()), SLOT(checkExercise()));
     connect(ui->horizontalSlider, SIGNAL(valueChanged(int)), SLOT(changeFontSize(int)));
+    connect(ui->checkBox, SIGNAL(toggled(bool)), wdg, SLOT(HideTexts(bool)));
 }
 
 ExerciseWindow::~ExerciseWindow()
