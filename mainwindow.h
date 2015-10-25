@@ -29,6 +29,7 @@ public:
     QDomElement getBlocks(const Block_Widget *fc, QDomDocument &doc, QString Name = "flowchart");
     void makeFlowChart();
     void loadFlowChart(Block_Widget *widget, QDomNode &node, bool isMain = false, bool delBottom = true);
+    bool isCorrectedPunctuation();
 
 public slots:
     //void saveSlot();
@@ -54,6 +55,7 @@ private slots:
     void endExercise();
     void showTheory();
     void changeFunctionName(QString name);
+    void translateBack();
 
 private:
     bool pressed;
