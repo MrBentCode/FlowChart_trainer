@@ -253,7 +253,7 @@ void MainWindow::saveSlot()
 
 void MainWindow::createActions() //Создадим действия для пунктов меню
 {
-    newAct = new QAction(tr("&Новый"), this);
+    newAct = new QAction(QIcon(":/resources/menu_icons/page.png"), tr("&Новый"), this);
      //Параметры конструктора QAction: иконка из ресурсов, текст меню, родитель
     newAct->setShortcuts(QKeySequence::New);
      //В классе QKeySequence уже определены стандартные комбинации клавиш
@@ -264,12 +264,12 @@ void MainWindow::createActions() //Создадим действия для пу
     connect(newAct, SIGNAL(triggered()), this, SLOT(newFile()));
      //Назначили слот для обработки выбора пункта меню
 
-    openAct = new QAction(tr("&Открыть..."), this);
+    openAct = new QAction(QIcon(":/resources/menu_icons/folder.png"), tr("&Открыть..."), this);
     openAct->setShortcuts(QKeySequence::Open);
     openAct->setStatusTip(tr("Открыть существующий файл"));
     connect(openAct, SIGNAL(triggered()), this, SLOT(open()));
 
-    saveAct = new QAction(tr("&Сохранить"), this);
+    saveAct = new QAction(QIcon(":/resources/menu_icons/disk.png"), tr("&Сохранить"), this);
     saveAct->setShortcuts(QKeySequence::Save);
     saveAct->setStatusTip(tr("Сохранить документ на диск"));
     connect(saveAct, SIGNAL(triggered()), this, SLOT(save()));
@@ -280,11 +280,11 @@ void MainWindow::createActions() //Создадим действия для пу
     saveAsAct->setStatusTip(tr("Сохранить копию документа под новым именем"));
     connect(saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
 
-    savePix = new QAction(tr("Сохранить картинку..."), this);
+    savePix = new QAction(QIcon(":/resources/menu_icons/photos.png"), tr("Сохранить картинку..."), this);
     savePix->setStatusTip(tr("Сохранить изображние блок-схемы"));
     connect(savePix, SIGNAL(triggered()), this, SLOT(savePicture()));
 
-    saveCode = new QAction(tr("Сохранить код алгоритма..."), this);
+    saveCode = new QAction(QIcon(":/resources/menu_icons/plus.png"), tr("Сохранить код алгоритма..."), this);
     saveCode->setStatusTip(tr("Сохранить исходный код алгоритма"));
     connect(saveCode, SIGNAL(triggered()), this, SLOT(saveSourceCode()));
 
@@ -293,11 +293,11 @@ void MainWindow::createActions() //Создадим действия для пу
     exitAct->setStatusTip(tr("Закрыть приложение"));
     connect(exitAct, SIGNAL(triggered()), this, SLOT(close()));
 
-    passTest = new QAction(tr("Пройти тестирование..."), this);
+    passTest = new QAction(QIcon(":/resources/menu_icons/monitor.png"), tr("Пройти тестирование..."), this);
     passTest->setStatusTip(tr("Пройти тестирование по теоретическим вопросам"));
     connect(passTest, SIGNAL(triggered()), this, SLOT(getTested()));
 
-    doExercise = new QAction(tr("Упражнения..."), this);
+    doExercise = new QAction(QIcon(":/resources/menu_icons/pencilstraight.png"), tr("Упражнения..."), this);
     doExercise->setStatusTip(tr("Выполнить практическое задание"));
     connect(doExercise, SIGNAL(triggered()), this, SLOT(startExercise()));
 

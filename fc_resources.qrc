@@ -10,5 +10,12 @@
         <file>resources/icon_arrow_right.png</file>
         <file>resources/icon_arrow_right_1.png</file>
         <file>resources/icon_arrow_left_1.png</file>
+        <file>resources/menu_icons/disk.png</file>
+        <file>resources/menu_icons/folder.png</file>
+        <file>resources/menu_icons/monitor.png</file>
+        <file>resources/menu_icons/page.png</file>
+        <file>resources/menu_icons/pencilstraight.png</file>
+        <file>resources/menu_icons/photos.png</file>
+        <file>resources/menu_icons/plus.png</file>
     </qresource>
 </RCC>
