@@ -13,7 +13,7 @@
 //#include <QWebView>
 #include "testwindow.h"
 #include "exercisewindow.h"
-#include "qwordcompleter.h"
+//#include "qwordcompleter.h"
 
 namespace Ui {
 class MainWindow;
@@ -72,7 +72,7 @@ private:
     QTextBrowser *theoryBrowser;
     QString theory;
     QString html;
-    QWordCompleter* completer;
+    //QWordCompleter* completer;
     QVector<QRadioButton *> radioButtons;
 
     void createActions();

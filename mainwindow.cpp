@@ -78,14 +78,16 @@ MainWindow::MainWindow(QWidget *parent) :
     Pal.setColor(QPalette::Background, Qt::white);
     ui->scrollArea->setAutoFillBackground(true);
     ui->scrollArea->setPalette(Pal);
+    ui->translate_button_back->hide();
 
+/*
     QStringList keywords;
     keywords << "int" << "double" << "void" << "cin" << "cout" << "if";
     completer = new QWordCompleter(keywords, this);
     completer->setCaseSensitivity(Qt::CaseInsensitive);
     completer->setWidget(ui->textEdit);
     connect(completer, SIGNAL(activated(QString)), completer, SLOT(replaceCurrentWord(QString)));
-
+*/
 
     makeFlowChart();
     //connect(wdg, SIGNAL(modified()), this, SLOT(translate()));
@@ -373,7 +375,7 @@ void MainWindow::createActions() //Создадим действия для пу
     saveAct->setStatusTip(tr("Сохранить документ на диск"));
     connect(saveAct, SIGNAL(triggered()), this, SLOT(save()));
 
-    saveAsAct = new QAction(tr("Сохранить к&ак..."), this);
+    saveAsAct = new QAction(QIcon(":/resources/menu_icons/disk.png"), tr("Сохранить к&ак..."), this);
      //Более простой конструктор QAction: текст меню, родитель
     saveAsAct->setShortcuts(QKeySequence::SaveAs);
     saveAsAct->setStatusTip(tr("Сохранить копию документа под новым именем"));
@@ -441,7 +443,7 @@ void MainWindow::createMenus() //Создание главного меню
     helpMenu = menuBar()->addMenu(tr("&Справка"));
     helpMenu->addAction(aboutFlowCharts);
     helpMenu->addAction(aboutAct);
-    helpMenu->addAction(aboutQtAct);
+    //helpMenu->addAction(aboutQtAct);
 }
 
 void MainWindow::createToolBars() //Создание кнопочных тулбаров
@@ -822,10 +824,10 @@ void MainWindow::showTheory()
 
 void MainWindow::changeFunctionName(QString name)
 {
-    QString sEnding = QString::fromStdString(name.toStdString().substr(name.length() - 4, 4).c_str());
+    /*QString sEnding = QString::fromStdString(name.toStdString().substr(name.length() - 4, 4).c_str());
     if (sEnding.contains(".xml"))
         name = QString::fromStdString(name.toStdString().substr(0, name.length()-4).c_str());
-    completer->setName(name);
+    completer->setName(name);*/
 }
 
 void MainWindow::translateBack()

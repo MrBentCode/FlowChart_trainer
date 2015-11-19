@@ -19,14 +19,14 @@ SOURCES += main.cpp\
     inputdialog.cpp \
     testwindow.cpp \
     exercisewindow.cpp \
-    qwordcompleter.cpp
+    #qwordcompleter.cpp
 
 HEADERS  += mainwindow.h \
     fc_widget.h \
     inputdialog.h \
     testwindow.h \
     exercisewindow.h \
-    qwordcompleter.h
+    #qwordcompleter.h
 
 FORMS    += mainwindow.ui \
     testwindow.ui \
