@@ -21,7 +21,7 @@ public:
     ~ExerciseWindow();
     void closeEvent(QCloseEvent *);
     void makeFlowChart();
-    QDomElement getBlocks(const Block_Widget *fc, QDomDocument &doc, QString Name = "flowchart");
+    QDomElement getBlocks(const FCWidget *fc, QDomDocument &doc, QString Name = "flowchart");
     void toCode();
     void XMLtoCode(QTextStream &text, QDomNode &node, int num_of_spaces);
     void generateSourceCode();
@@ -34,7 +34,7 @@ public slots:
     void changeFontSize(int size);
 private:
     Ui::ExerciseWindow *ui;
-    Block_Widget *wdg;
+    FCWidget *wdg;
     QVBoxLayout *fcvLayout;
     std::string var_abc;
     bool openFromNewLine;

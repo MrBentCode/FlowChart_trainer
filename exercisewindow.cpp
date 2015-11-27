@@ -40,19 +40,19 @@ void ExerciseWindow::closeEvent(QCloseEvent *)
 
 void ExerciseWindow::makeFlowChart()
 {
-    wdg = new Block_Widget(this);
+    wdg = new FCWidget(this);
     ui->scrollArea->setWidget(wdg);
     fcvLayout = new QVBoxLayout();
     fcvLayout->setSpacing(0);
     wdg->setLayout(fcvLayout);
-    fcvLayout->insertWidget(0, new BlockBegin_Widget(wdg));
-    Line_Widget *line = new Line_Widget(wdg);
+    fcvLayout->insertWidget(0, new FCBeginWidget(wdg));
+    FCLine *line = new FCLine(wdg);
     fcvLayout->insertWidget(1, line);
-    fcvLayout->insertWidget(2, new BlockEnd_Widget(wdg));
+    fcvLayout->insertWidget(2, new FCEndWidget(wdg));
     fcvLayout->setAlignment(Qt::AlignHCenter);
     wdg->UpdateSize();
 
-    connect(line, SIGNAL(clicked(Line_Widget*)), line, SLOT(lineclicked(Line_Widget*)));
+    connect(line, SIGNAL(clicked(FCLine*)), line, SLOT(lineclicked(FCLine*)));
     connect(ui->radio_action, SIGNAL(clicked()), wdg, SLOT(ClickedAction()));
     connect(ui->radio_input, SIGNAL(clicked()), wdg, SLOT(ClickedInput()));
     connect(ui->radio_output, SIGNAL(clicked()), wdg, SLOT(ClickedOutput()));
@@ -62,7 +62,7 @@ void ExerciseWindow::makeFlowChart()
     connect(ui->radio_postfix_cycle, SIGNAL(clicked()), wdg, SLOT(ClickedPostfix()));
 }
 
-QDomElement ExerciseWindow::getBlocks(const Block_Widget *fc, QDomDocument &doc, QString Name)
+QDomElement ExerciseWindow::getBlocks(const FCWidget *fc, QDomDocument &doc, QString Name)
 {
     int n = fc->layout()->count();
     int i = 0;
@@ -71,31 +71,31 @@ QDomElement ExerciseWindow::getBlocks(const Block_Widget *fc, QDomDocument &doc,
         QDomElement block;
         QDomAttr attr = doc.createAttribute("text");
         QString tag = fc->layout()->itemAt(i)->widget()->metaObject()->className();
-        if (tag != "Line_Widget" && tag != "LeftLine" && tag != "RightLine") {
+        if (tag != "FCLine" && tag != "FCLeftLine" && tag != "RightLine") {
             block = doc.createElement(tag);
-            Block_Widget *widget = (Block_Widget*)fc->layout()->itemAt(i)->widget();
+            FCWidget *widget = (FCWidget*)fc->layout()->itemAt(i)->widget();
             attr.setValue(widget->getText());
             block.setAttributeNode(attr);
             domElement.appendChild(block);
-            if (tag == "Divar_Widget") {
-                Divar_Widget *divar = (Divar_Widget*)widget;
+            if (tag == "FCDivarWidget") {
+                FCDivarWidget *divar = (FCDivarWidget*)widget;
                 QDomElement left = getBlocks(divar->getRightLine(), doc, "Left");
                 QDomElement right = getBlocks(divar->getLeftLine(), doc, "Right");
                 block.appendChild(left);
                 block.appendChild(right);
             }
-            else if (tag == "Prefix_Cycle") {
-                Prefix_Cycle *cycle = (Prefix_Cycle*)widget;
+            else if (tag == "FCPrefixCycleWidget") {
+                FCPrefixCycleWidget *cycle = (FCPrefixCycleWidget*)widget;
                 QDomElement body = getBlocks(cycle->getCycleBody(), doc, "Body");
                 block.appendChild(body);
             }
-            else if (tag == "Postfix_Cycle") {
-                Postfix_Cycle *cycle = (Postfix_Cycle*)widget;
+            else if (tag == "FCPostfixCycleWidget") {
+                FCPostfixCycleWidget *cycle = (FCPostfixCycleWidget*)widget;
                 QDomElement body = getBlocks(cycle->getCycleBody(), doc, "Body");
                 block.appendChild(body);
             }
-            else if (tag == "Parameter_Cycle") {
-                Parameter_Cycle *cycle = (Parameter_Cycle*)widget;
+            else if (tag == "FCParameterCycleWidget") {
+                FCParameterCycleWidget *cycle = (FCParameterCycleWidget*)widget;
                 QDomElement body = getBlocks(cycle->getCycleBody(), doc, "Body");
                 block.appendChild(body);
             }
@@ -145,12 +145,12 @@ void ExerciseWindow::XMLtoCode(QTextStream &text, QDomNode &node, int num_of_spa
                 if (domElement.tagName() == "Left" || domElement.tagName() == "Right"
                        || domElement.tagName() == "Body") XMLtoCode(text, domElement, num_of_spaces);
 
-                if (domElement.tagName() != "Line_Widget" && domElement.tagName() != "Left" &&
+                if (domElement.tagName() != "FCLine" && domElement.tagName() != "Left" &&
                     domElement.tagName() != "Right" && domElement.tagName() != "Body") {
 
                     QString line = domElement.attribute("text");
 
-                    if (domElement.tagName() == "BlockBegin_Widget") {
+                    if (domElement.tagName() == "FCBeginWidget") {
                         if (openFromNewLine) text << endl << "{" << endl;
                         else text << " {" << endl;
                         for (int i = 0; i < vars.size(); i++){
@@ -158,31 +158,31 @@ void ExerciseWindow::XMLtoCode(QTextStream &text, QDomNode &node, int num_of_spa
                             text << space + "int " + variable + " = 0;" << endl;
                         }
                     }
-                    else if (domElement.tagName() == "BlockAction_Widget") text << space + line + ";" << endl;
-                    else if (domElement.tagName() == "BlockInput_Widget") text << space + "cin >> " + line + ";" << endl;
-                    else if (domElement.tagName() == "BlockOutput_Widget") text << space + "cout << " + line + ";" << endl;
-                    else if (domElement.tagName() == "Divar_Widget") {
+                    else if (domElement.tagName() == "FCActionWidget") text << space + line + ";" << endl;
+                    else if (domElement.tagName() == "FCInputWidget") text << space + "cin >> " + line + ";" << endl;
+                    else if (domElement.tagName() == "FCOutputWidget") text << space + "cout << " + line + ";" << endl;
+                    else if (domElement.tagName() == "FCDivarWidget") {
                         text << space + "if (" + line + ")";
                         if (openFromNewLine) text << endl << space + "{" << endl;
                         else text << " {" << endl;
                         XMLtoCode(text, domElement, num_of_spaces + 5);
                         text << space + "}" << endl;
                     }
-                    else if (domElement.tagName() == "Prefix_Cycle") {
+                    else if (domElement.tagName() == "FCPrefixCycleWidget") {
                         text << space + "while (" + line + ")";
                         if (openFromNewLine) text << endl << space + "{" << endl;
                         else text << " {" << endl;
                         XMLtoCode(text, domElement, num_of_spaces + 5);
                         text << space + "}" << endl;
                     }
-                    else if (domElement.tagName() == "Postfix_Cycle") {
+                    else if (domElement.tagName() == "FCPostfixCycleWidget") {
                         text << space + "do";
                         if (openFromNewLine) text << endl << space + "{" << endl;
                         else text << " {" << endl;
                         XMLtoCode(text, domElement, num_of_spaces + 5);
                         text << space + "} while (" + line + ");" << endl;
                     }
-                    else if (domElement.tagName() == "Parameter_Cycle") {
+                    else if (domElement.tagName() == "FCParameterCycleWidget") {
                         text << space + "for (" + line + ")";
                         if (openFromNewLine) text << endl << space + "{" << endl;
                         else text << " {" << endl;
@@ -190,7 +190,7 @@ void ExerciseWindow::XMLtoCode(QTextStream &text, QDomNode &node, int num_of_spa
                         text << space + "}" << endl;
                     }
 
-                    else if (domElement.tagName() == "BlockEnd_Widget") text << "}" << endl;
+                    else if (domElement.tagName() == "FCEndWidget") text << "}" << endl;
                 }
             }
             if (domElement.tagName() == "Left") {
@@ -238,7 +238,7 @@ void ExerciseWindow::generateXML(QDomElement &domElement, QDomDocument &doc)
     int choice = 0;
     int var_choice = 0;
     int i = 0;
-    QDomElement block = doc.createElement("BlockBegin_Widget");
+    QDomElement block = doc.createElement("FCBeginWidget");
     QString sAttr = "operator()";
     QDomAttr attr = doc.createAttribute("text");
     domElement.appendChild(block);
@@ -250,21 +250,21 @@ void ExerciseWindow::generateXML(QDomElement &domElement, QDomDocument &doc)
         QString var = vars[var_choice];
         switch(choice){
         case 0:{
-            block = doc.createElement("BlockAction_Widget");
+            block = doc.createElement("FCActionWidget");
             sAttr = var + " = " + QString::number(rand()%10);
             attr.setValue(sAttr);
 
         }break;
         case 1:{
-            block = doc.createElement("BlockInput_Widget");
+            block = doc.createElement("FCInputWidget");
             attr.setValue(var);
         }break;
         case 2:{
-            block = doc.createElement("BlockOutput_Widget");
+            block = doc.createElement("FCOutputWidget");
             attr.setValue(var);
         }break;
         case 3:{
-            block = doc.createElement("Divar_Widget");
+            block = doc.createElement("FCDivarWidget");
             QString decision = var + " == " + QString::number(5);
             if (i%2 == 0) decision = var + " < " + QString::number(10);
             else decision = var + " > " + QString::number(0);
@@ -273,8 +273,8 @@ void ExerciseWindow::generateXML(QDomElement &domElement, QDomDocument &doc)
             QDomElement right = doc.createElement("Right");
             block.appendChild(left);
             block.appendChild(right);
-            QDomElement blockTrue = doc.createElement("BlockAction_Widget");
-            QDomElement blockFalse = doc.createElement("BlockAction_Widget");
+            QDomElement blockTrue = doc.createElement("FCActionWidget");
+            QDomElement blockFalse = doc.createElement("FCActionWidget");
             QDomAttr attribute = doc.createAttribute("text");
             attribute.setValue(var + "++");
             blockTrue.setAttributeNode(attribute);
@@ -285,36 +285,36 @@ void ExerciseWindow::generateXML(QDomElement &domElement, QDomDocument &doc)
             right.appendChild(blockFalse);
         }break;
         case 4:{
-            block = doc.createElement("Prefix_Cycle");
+            block = doc.createElement("FCPrefixCycleWidget");
             QString decision = var + " < " + QString::number(i * 5);
             attr.setValue(decision);
             QDomElement body = doc.createElement("Body");
             block.appendChild(body);
-            QDomElement blockTrue = doc.createElement("BlockAction_Widget");
+            QDomElement blockTrue = doc.createElement("FCActionWidget");
             QDomAttr attribute = doc.createAttribute("text");
             attribute.setValue(var + "++");
             blockTrue.setAttributeNode(attribute);
             body.appendChild(blockTrue);
         }break;
         case 5:{
-            block = doc.createElement("Postfix_Cycle");
+            block = doc.createElement("FCPostfixCycleWidget");
             QString decision = var + " < " + QString::number(i * 5);
             attr.setValue(decision);
             QDomElement body = doc.createElement("Body");
             block.appendChild(body);
-            QDomElement blockTrue = doc.createElement("BlockAction_Widget");
+            QDomElement blockTrue = doc.createElement("FCActionWidget");
             QDomAttr attribute = doc.createAttribute("text");
             attribute.setValue(var + "++");
             blockTrue.setAttributeNode(attribute);
             body.appendChild(blockTrue);
         }break;
         case 6:{
-            block = doc.createElement("Parameter_Cycle");
+            block = doc.createElement("FCParameterCycleWidget");
             QString decision = "int i = 0; i < " + QString::number(i * 5) + "; i++";
             attr.setValue(decision);
             QDomElement body = doc.createElement("Body");
             block.appendChild(body);
-            QDomElement blockTrue = doc.createElement("BlockAction_Widget");
+            QDomElement blockTrue = doc.createElement("FCActionWidget");
             QDomAttr attribute = doc.createAttribute("text");
             attribute.setValue(var + "++");
             blockTrue.setAttributeNode(attribute);
@@ -325,7 +325,7 @@ void ExerciseWindow::generateXML(QDomElement &domElement, QDomDocument &doc)
         domElement.appendChild(block);
         i++;
     }
-    block = doc.createElement("BlockEnd_Widget");
+    block = doc.createElement("FCEndWidget");
     domElement.appendChild(block);
 }
 

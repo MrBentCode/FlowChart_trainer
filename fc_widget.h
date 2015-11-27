@@ -9,7 +9,7 @@
 
 //void SetNewSize(QWidget *widget);
 
-class Block_Widget: public QWidget
+class FCWidget: public QWidget
 {
     Q_OBJECT
 private:
@@ -28,15 +28,15 @@ public:
     bool isLineBlock();
     bool isToDelete();
     bool isToDialog();
-    Block_Widget(QWidget *parent = 0);
-    ~Block_Widget();
+    FCWidget(QWidget *parent = 0);
+    virtual ~FCWidget();
     virtual void UpdateSize();
     virtual int GetMaxWidth();
     virtual std::string returnTag();
     virtual QString getText();
     virtual QString getDefaultText();
     void createBlock(int index);
-    void addBlock(int index, Block_Widget *widget, bool withLine = true);
+    void addBlock(int index, FCWidget *widget, bool withLine = true);
 signals:
     void clicked();
     //void modified();
@@ -54,33 +54,33 @@ public slots:
     virtual void block_clicked();
 };
 
-class MultyColumn: public Block_Widget
+class FCColumn: public FCWidget
 {
 public:
-    MultyColumn(QWidget *parent = 0);
-    ~MultyColumn(){}
+    FCColumn(QWidget *parent = 0);
+    ~FCColumn(){}
     void UpdateSize();
 };
 
-class LeftLine: public Block_Widget
+class FCLeftLine: public FCWidget
 {
     Q_OBJECT
 public:
     int margin;
-    LeftLine(QWidget *parent = 0, bool bottom = false);
-    ~LeftLine(){}
+    FCLeftLine(QWidget *parent = 0, bool bottom = false);
+    ~FCLeftLine(){}
 private:
     bool isBottom;
     void paintEvent(QPaintEvent *);
 };
 
-class RightLine: public Block_Widget
+class FCRightLine: public FCWidget
 {
     Q_OBJECT
 public:
     int margin;
-    RightLine(QWidget *parent = 0, bool bottom = false, bool back = false, bool arrow = false);
-    ~RightLine(){}
+    FCRightLine(QWidget *parent = 0, bool bottom = false, bool back = false, bool arrow = false);
+    ~FCRightLine(){}
 private:
     bool isBottom;
     bool isBack;
@@ -88,25 +88,25 @@ private:
     void paintEvent(QPaintEvent *);
 };
 
-class BottomLine: public QWidget
+class FCBottomLine: public QWidget
 {
     Q_OBJECT
 public:
     int marginLeft;
     int marginRight;
-    BottomLine(QWidget *parent = 0, bool left = false);
-    ~BottomLine();
+    FCBottomLine(QWidget *parent = 0, bool left = false);
+    ~FCBottomLine();
 private:
     bool isLeftSide;
     void paintEvent(QPaintEvent *);
 };
 
-class Line_Widget: public Block_Widget
+class FCLine: public FCWidget
 {
     Q_OBJECT
 public:
-    Line_Widget(QWidget *parent = 0);
-    ~Line_Widget();
+    FCLine(QWidget *parent = 0);
+    ~FCLine();
     bool isArrow();
 private:
     bool ForceArrow;
@@ -117,78 +117,78 @@ private:
     void mousePressEvent(QMouseEvent *);
 
 signals:
-    void clicked(Line_Widget* object);
+    void clicked(FCLine* object);
 public slots:
-    void lineclicked(Line_Widget* object);
+    void lineclicked(FCLine* object);
 };
 
-class CrossLine_Widget: public Block_Widget
+class FCCrossLine: public FCWidget
 {
     Q_OBJECT
 public:
-    CrossLine_Widget(QWidget *parent = 0, bool SetArrow = false);
-    ~CrossLine_Widget();
+    FCCrossLine(QWidget *parent = 0, bool SetArrow = false);
+    ~FCCrossLine();
 private:
     bool isArrow;
     void paintEvent(QPaintEvent *);
 };
 
-class BlockBegin_Widget: public Block_Widget
+class FCBeginWidget: public FCWidget
 {
     Q_OBJECT
 public:
-    BlockBegin_Widget(QWidget *parent = 0);
-    ~BlockBegin_Widget();
+    FCBeginWidget(QWidget *parent = 0);
+    ~FCBeginWidget();
 private:
     void paintEvent(QPaintEvent *);
 };
 
-class BlockEnd_Widget: public Block_Widget
+class FCEndWidget: public FCWidget
 {
     Q_OBJECT
 public:
-    BlockEnd_Widget(QWidget *parent = 0);
-    ~BlockEnd_Widget();
+    FCEndWidget(QWidget *parent = 0);
+    ~FCEndWidget();
 private:
     void paintEvent(QPaintEvent *);
 };
 
-class BlockAction_Widget: public Block_Widget
+class FCActionWidget: public FCWidget
 {
     Q_OBJECT
 public:
-    BlockAction_Widget(QWidget *parent = 0, QString text = "Действие");
-    ~BlockAction_Widget();
+    FCActionWidget(QWidget *parent = 0, QString text = "Действие");
+    ~FCActionWidget();
 private:
     void paintEvent(QPaintEvent *);
 };
 
-class BlockInput_Widget: public Block_Widget
+class FCInputWidget: public FCWidget
 {
     Q_OBJECT
 public:
-    BlockInput_Widget(QWidget *parent = 0, QString text = "Ввод");
-    ~BlockInput_Widget();
+    FCInputWidget(QWidget *parent = 0, QString text = "Ввод");
+    ~FCInputWidget();
 private:
     void paintEvent(QPaintEvent *);
 };
 
-class BlockOutput_Widget: public Block_Widget
+class FCOutputWidget: public FCWidget
 {
     Q_OBJECT
 public:
-    BlockOutput_Widget(QWidget *parent = 0, QString text = "Вывод");
-    ~BlockOutput_Widget();
+    FCOutputWidget(QWidget *parent = 0, QString text = "Вывод");
+    ~FCOutputWidget();
 private:
     void paintEvent(QPaintEvent *);
 };
 
-class Decision_Widget: public Block_Widget
+class FCDecisionWidget: public FCWidget
 {
     Q_OBJECT
 public:
-    Decision_Widget(QWidget *parent = 0, QString text = "Решение", bool isPrefix = false);
-    ~Decision_Widget();
+    FCDecisionWidget(QWidget *parent = 0, QString text = "Решение", bool isPrefix = false);
+    ~FCDecisionWidget();
 private:
     void paintEvent(QPaintEvent *);
     bool isPrefix;
@@ -196,29 +196,29 @@ public slots:
     void block_clicked();
 };
 
-class Parameter_Widget: public Block_Widget
+class FCParameterWidget: public FCWidget
 {
     Q_OBJECT
 public:
-    Parameter_Widget(QWidget *parent = 0, QString text = "Параметр");
-    ~Parameter_Widget();
+    FCParameterWidget(QWidget *parent = 0, QString text = "Параметр");
+    ~FCParameterWidget();
 private:
     void paintEvent(QPaintEvent *);
 public slots:
     void block_clicked();
 };
 
-class Divar_Widget: public Block_Widget
+class FCDivarWidget: public FCWidget
 {
     Q_OBJECT
 public:
-    Divar_Widget(QWidget *parent = 0, QString text = "Решение");
-    ~Divar_Widget();
+    FCDivarWidget(QWidget *parent = 0, QString text = "Решение");
+    ~FCDivarWidget();
     void UpdateSize();
     int GetMaxWidth();
     QString getText();
-    Block_Widget *getLeftLine();
-    Block_Widget *getRightLine();
+    FCWidget *getLeftLine();
+    FCWidget *getRightLine();
 
 private:
     QHBoxLayout *UPLayout;
@@ -226,29 +226,29 @@ private:
     QVBoxLayout *VLayout;
     QVBoxLayout *LLayout;
     QVBoxLayout *RLayout;
-    MultyColumn *decision;
-    MultyColumn *doing;
-    Block_Widget *Divar;
-    Block_Widget *Yes;
-    Block_Widget *No;
-    LeftLine *lline;
-    RightLine *rline;
-    BottomLine *bline;
+    FCColumn *decision;
+    FCColumn *doing;
+    FCWidget *Divar;
+    FCWidget *Yes;
+    FCWidget *No;
+    FCLeftLine *lline;
+    FCRightLine *rline;
+    FCBottomLine *bline;
     void paintEvent(QPaintEvent *);
     void mousePressEvent(QMouseEvent *);
 };
 
-class Prefix_Cycle: public Block_Widget
+class FCPrefixCycleWidget: public FCWidget
 {
     Q_OBJECT
 public:
-    Prefix_Cycle(QWidget *parent = 0, QString text = "Решение");
-    ~Prefix_Cycle();
+    FCPrefixCycleWidget(QWidget *parent = 0, QString text = "Решение");
+    ~FCPrefixCycleWidget();
     void paintEvent(QPaintEvent *);
     void UpdateSize();
     int GetMaxWidth();
     QString getText();
-    Block_Widget *getCycleBody();
+    FCWidget *getCycleBody();
 private:
     QHBoxLayout *UPLayout1;
     QHBoxLayout *UPLayout2;
@@ -256,76 +256,76 @@ private:
     QVBoxLayout *UPLayout;
     QVBoxLayout *VLayout;
     QVBoxLayout *Layout;
-    MultyColumn *decision;
-    MultyColumn *doing;
-    Decision_Widget *Cycle;
-    Block_Widget *Yes;
-    Block_Widget *No;
-    Block_Widget *top1;
-    Block_Widget *top2;
-    Block_Widget *top1left;
-    Block_Widget *top2right;
-    CrossLine_Widget *cross;
-    LeftLine *lline;
-    RightLine *rline;
-    BottomLine *bline;
-    LeftLine *lbline;
-    RightLine *rbline;
+    FCColumn *decision;
+    FCColumn *doing;
+    FCDecisionWidget *Cycle;
+    FCWidget *Yes;
+    FCWidget *No;
+    FCWidget *top1;
+    FCWidget *top2;
+    FCWidget *top1left;
+    FCWidget *top2right;
+    FCCrossLine *cross;
+    FCLeftLine *lline;
+    FCRightLine *rline;
+    FCBottomLine *bline;
+    FCLeftLine *lbline;
+    FCRightLine *rbline;
 };
 
-class Postfix_Cycle: public Block_Widget
+class FCPostfixCycleWidget: public FCWidget
 {
     Q_OBJECT
 public:
-    Postfix_Cycle(QWidget *parent = 0, QString text = "Решение");
-    ~Postfix_Cycle();
+    FCPostfixCycleWidget(QWidget *parent = 0, QString text = "Решение");
+    ~FCPostfixCycleWidget();
     void paintEvent(QPaintEvent *);
     void UpdateSize();
     int GetMaxWidth();
     QString getText();
-    Block_Widget *getCycleBody();
+    FCWidget *getCycleBody();
 private:
     QHBoxLayout *UPLayout;
     QHBoxLayout *HLayout;
     QVBoxLayout *VLayout;
     QVBoxLayout *Layout;
-    MultyColumn *decision;
-    MultyColumn *enter;
-    CrossLine_Widget *cross;
-    Decision_Widget *Cycle;
-    Block_Widget *Center;
-    Block_Widget *LeftSideUp;
-    Block_Widget *LeftSideDown;
-    RightLine *rline;
-    RightLine *rbline;
+    FCColumn *decision;
+    FCColumn *enter;
+    FCCrossLine *cross;
+    FCDecisionWidget *Cycle;
+    FCWidget *Center;
+    FCWidget *LeftSideUp;
+    FCWidget *LeftSideDown;
+    FCRightLine *rline;
+    FCRightLine *rbline;
 };
 
-class Parameter_Cycle: public Block_Widget
+class FCParameterCycleWidget: public FCWidget
 {
     Q_OBJECT
 public:
-    Parameter_Cycle(QWidget *parent = 0, QString text = "Параметр");
-    ~Parameter_Cycle();
+    FCParameterCycleWidget(QWidget *parent = 0, QString text = "Параметр");
+    ~FCParameterCycleWidget();
     void paintEvent(QPaintEvent *);
     void UpdateSize();
     int GetMaxWidth();
     QString getText();
-    Block_Widget *getCycleBody();
+    FCWidget *getCycleBody();
 private:
     QHBoxLayout *UPLayout;
     QHBoxLayout *HLayout;
     QVBoxLayout *VLayout;
     QVBoxLayout *Layout;
-    MultyColumn *decision;
-    MultyColumn *doing;
-    Block_Widget *Cycle;
-    Block_Widget *Yes;
-    Block_Widget *No;
-    LeftLine *lline;
-    RightLine *rline;
-    BottomLine *bline;
-    LeftLine *lbline;
-    RightLine *rbline;
+    FCColumn *decision;
+    FCColumn *doing;
+    FCWidget *Cycle;
+    FCWidget *Yes;
+    FCWidget *No;
+    FCLeftLine *lline;
+    FCRightLine *rline;
+    FCBottomLine *bline;
+    FCLeftLine *lbline;
+    FCRightLine *rbline;
 };
 
 

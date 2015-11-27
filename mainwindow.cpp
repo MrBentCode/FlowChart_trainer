@@ -60,8 +60,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->widget_3->hide();
     //ui->textEdit->hide();
     ui->code_viewer_widget->hide();
-    myName = "Вася Пупкин";
-    programVersion = "0.1";
+    myName = "Есеркепов Андрей";
+    programVersion = "0.9";
     openFromNewLine = ui->checkBox_newLine->isChecked();
     ui->textEdit->setFont(QFont("Courier", 10));
     //encodeQuestions();
@@ -138,7 +138,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-QDomElement MainWindow::getBlocks(const Block_Widget *fc, QDomDocument& doc, QString Name)
+QDomElement MainWindow::getBlocks(const FCWidget *fc, QDomDocument& doc, QString Name)
 {
     int n = fc->layout()->count();
     int i = 0;
@@ -147,31 +147,31 @@ QDomElement MainWindow::getBlocks(const Block_Widget *fc, QDomDocument& doc, QSt
         QDomElement block;
         QDomAttr attr = doc.createAttribute("text");
         QString tag = fc->layout()->itemAt(i)->widget()->metaObject()->className();
-        if (tag != "Line_Widget" && tag != "LeftLine" && tag != "RightLine") {
+        if (tag != "FCLine" && tag != "FCLeftLine" && tag != "RightLine") {
             block = doc.createElement(tag);
-            Block_Widget *widget = (Block_Widget*)fc->layout()->itemAt(i)->widget();
+            FCWidget *widget = (FCWidget*)fc->layout()->itemAt(i)->widget();
             attr.setValue(widget->getText());
             block.setAttributeNode(attr);
             domElement.appendChild(block);
-            if (tag == "Divar_Widget") {
-                Divar_Widget *divar = (Divar_Widget*)widget;
+            if (tag == "FCDivarWidget") {
+                FCDivarWidget *divar = (FCDivarWidget*)widget;
                 QDomElement left = getBlocks(divar->getRightLine(), doc, "Left");
                 QDomElement right = getBlocks(divar->getLeftLine(), doc, "Right");
                 block.appendChild(left);
                 block.appendChild(right);
             }
-            else if (tag == "Prefix_Cycle") {
-                Prefix_Cycle *cycle = (Prefix_Cycle*)widget;
+            else if (tag == "FCPrefixCycleWidget") {
+                FCPrefixCycleWidget *cycle = (FCPrefixCycleWidget*)widget;
                 QDomElement body = getBlocks(cycle->getCycleBody(), doc, "Body");
                 block.appendChild(body);
             }
-            else if (tag == "Postfix_Cycle") {
-                Postfix_Cycle *cycle = (Postfix_Cycle*)widget;
+            else if (tag == "FCPostfixCycleWidget") {
+                FCPostfixCycleWidget *cycle = (FCPostfixCycleWidget*)widget;
                 QDomElement body = getBlocks(cycle->getCycleBody(), doc, "Body");
                 block.appendChild(body);
             }
-            else if (tag == "Parameter_Cycle") {
-                Parameter_Cycle *cycle = (Parameter_Cycle*)widget;
+            else if (tag == "FCParameterCycleWidget") {
+                FCParameterCycleWidget *cycle = (FCParameterCycleWidget*)widget;
                 QDomElement body = getBlocks(cycle->getCycleBody(), doc, "Body");
                 block.appendChild(body);
             }
@@ -183,19 +183,19 @@ QDomElement MainWindow::getBlocks(const Block_Widget *fc, QDomDocument& doc, QSt
 
 void MainWindow::makeFlowChart()
 {
-    wdg = new Block_Widget(this);
+    wdg = new FCWidget(this);
     ui->scrollArea->setWidget(wdg);
     fcvLayout = new QVBoxLayout();
     fcvLayout->setSpacing(0);
     wdg->setLayout(fcvLayout);
-    fcvLayout->insertWidget(0, new BlockBegin_Widget(wdg));
-    Line_Widget *line = new Line_Widget(wdg);
+    fcvLayout->insertWidget(0, new FCBeginWidget(wdg));
+    FCLine *line = new FCLine(wdg);
     fcvLayout->insertWidget(1, line);
-    fcvLayout->insertWidget(2, new BlockEnd_Widget(wdg));
+    fcvLayout->insertWidget(2, new FCEndWidget(wdg));
     fcvLayout->setAlignment(Qt::AlignHCenter);
     wdg->UpdateSize();
 
-    connect(line, SIGNAL(clicked(Line_Widget*)), line, SLOT(lineclicked(Line_Widget*)));
+    connect(line, SIGNAL(clicked(FCLine*)), line, SLOT(lineclicked(FCLine*)));
     connect(ui->radio_action, SIGNAL(clicked()), wdg, SLOT(ClickedAction()));
     connect(ui->radio_input, SIGNAL(clicked()), wdg, SLOT(ClickedInput()));
     connect(ui->radio_output, SIGNAL(clicked()), wdg, SLOT(ClickedOutput()));
@@ -206,7 +206,7 @@ void MainWindow::makeFlowChart()
 
 }
 
-void MainWindow::loadFlowChart(Block_Widget *widget, QDomNode &node, bool isMain, bool delBottom)
+void MainWindow::loadFlowChart(FCWidget *widget, QDomNode &node, bool isMain, bool delBottom)
 {
     QVBoxLayout *layout = (QVBoxLayout*)widget->layout();
     int n = 1, m = 1;
@@ -219,35 +219,35 @@ void MainWindow::loadFlowChart(Block_Widget *widget, QDomNode &node, bool isMain
     QDomNode domNode = node.firstChild();
     int i = n;
     if (!delBottom) i--;
-    Block_Widget *block;
+    FCWidget *block;
     while(!domNode.isNull()) {
         if (domNode.isElement()) {
             QDomElement domElement = domNode.toElement();
             if (!domElement.isNull()) {
                 //if (domElement.tagName() == "Body") loadFlowChart(widget, domElement);
 
-                if (domElement.tagName() != "Line_Widget" && domElement.tagName() != "Left" &&
+                if (domElement.tagName() != "FCLine" && domElement.tagName() != "Left" &&
                     domElement.tagName() != "Right" && domElement.tagName() != "Body") {
 
                     QString text = domElement.attribute("text");
 
-                    if (domElement.tagName() == "BlockBegin_Widget") block = new BlockBegin_Widget(widget);
-                    else if (domElement.tagName() == "BlockAction_Widget") block = new BlockAction_Widget(widget, text);
-                    else if (domElement.tagName() == "BlockInput_Widget") block = new BlockInput_Widget(widget, text);
-                    else if (domElement.tagName() == "BlockOutput_Widget") block = new BlockOutput_Widget(widget, text);
-                    else if (domElement.tagName() == "Divar_Widget") block = new Divar_Widget(widget, text);
-                    else if (domElement.tagName() == "Prefix_Cycle") block = new Prefix_Cycle(widget, text);
-                    else if (domElement.tagName() == "Postfix_Cycle") block = new Postfix_Cycle(widget, text);
-                    else if (domElement.tagName() == "Parameter_Cycle") block = new Parameter_Cycle(widget, text);
-                    if (domElement.tagName() != "BlockEnd_Widget") widget->addBlock(i, block);
-                    else if (domElement.tagName() == "BlockEnd_Widget") {
-                        block = new BlockEnd_Widget(widget);
+                    if (domElement.tagName() == "FCBeginWidget") block = new FCBeginWidget(widget);
+                    else if (domElement.tagName() == "FCActionWidget") block = new FCActionWidget(widget, text);
+                    else if (domElement.tagName() == "FCInputWidget") block = new FCInputWidget(widget, text);
+                    else if (domElement.tagName() == "FCOutputWidget") block = new FCOutputWidget(widget, text);
+                    else if (domElement.tagName() == "FCDivarWidget") block = new FCDivarWidget(widget, text);
+                    else if (domElement.tagName() == "FCPrefixCycleWidget") block = new FCPrefixCycleWidget(widget, text);
+                    else if (domElement.tagName() == "FCPostfixCycleWidget") block = new FCPostfixCycleWidget(widget, text);
+                    else if (domElement.tagName() == "FCParameterCycleWidget") block = new FCParameterCycleWidget(widget, text);
+                    if (domElement.tagName() != "FCEndWidget") widget->addBlock(i, block);
+                    else if (domElement.tagName() == "FCEndWidget") {
+                        block = new FCEndWidget(widget);
                         widget->addBlock(i, block, false);
                     }
                     i+=2;
 
-                    if (domElement.tagName() == "Divar_Widget") {
-                        Divar_Widget *divar = (Divar_Widget*)block;
+                    if (domElement.tagName() == "FCDivarWidget") {
+                        FCDivarWidget *divar = (FCDivarWidget*)block;
                         QDomNode leftNode = domElement.firstChild();
                         QDomElement leftElement = leftNode.toElement();
                         loadFlowChart(divar->getRightLine(), leftElement);
@@ -255,26 +255,26 @@ void MainWindow::loadFlowChart(Block_Widget *widget, QDomNode &node, bool isMain
                         QDomElement rightElement = rightNode.toElement();
                         loadFlowChart(divar->getLeftLine(), rightElement);
                     }
-                    else if (domElement.tagName() == "Prefix_Cycle") {
-                        Prefix_Cycle *cycle = (Prefix_Cycle*)block;
+                    else if (domElement.tagName() == "FCPrefixCycleWidget") {
+                        FCPrefixCycleWidget *cycle = (FCPrefixCycleWidget*)block;
                         QDomElement body = domElement.firstChild().toElement();
                         qDebug()<<"CYCLE";
                         loadFlowChart(cycle->getCycleBody(), body, false, false);
-                        //cycle->getCycleBody()->layout()->addWidget(new LeftLine(cycle->getCycleBody(), true));
+                        //cycle->getCycleBody()->layout()->addWidget(new FCLeftLine(cycle->getCycleBody(), true));
                     }
-                    else if (domElement.tagName() == "Parameter_Cycle") {
-                        Parameter_Cycle *cycle = (Parameter_Cycle*)block;
+                    else if (domElement.tagName() == "FCParameterCycleWidget") {
+                        FCParameterCycleWidget *cycle = (FCParameterCycleWidget*)block;
                         QDomElement body = domElement.firstChild().toElement();
                         qDebug()<<"CYCLE";
                         loadFlowChart(cycle->getCycleBody(), body, false, false);
-                        //cycle->getCycleBody()->layout()->addWidget(new LeftLine(cycle->getCycleBody(), true));
+                        //cycle->getCycleBody()->layout()->addWidget(new FCLeftLine(cycle->getCycleBody(), true));
                     }
-                    else if (domElement.tagName() == "Postfix_Cycle") {
-                        Postfix_Cycle *cycle = (Postfix_Cycle*)block;
+                    else if (domElement.tagName() == "FCPostfixCycleWidget") {
+                        FCPostfixCycleWidget *cycle = (FCPostfixCycleWidget*)block;
                         QDomElement body = domElement.firstChild().toElement();
                         qDebug()<<"CYCLE";
                         loadFlowChart(cycle->getCycleBody(), body);
-                        //cycle->getCycleBody()->layout()->addWidget(new LeftLine(cycle->getCycleBody(), true));
+                        //cycle->getCycleBody()->layout()->addWidget(new FCLeftLine(cycle->getCycleBody(), true));
                     }
                 }
 
@@ -309,11 +309,10 @@ bool MainWindow::isCorrectedPunctuation()
     }
     return (LBRack == RBrack && LFigureBrack == RFigureBrack);
 }
-
+/*
 QDomElement MainWindow::codeToXML(QString text, QDomDocument &doc, QDomElement &domElement, QVector<QString> vector)
 {
-    int i = 0;
-    QDomElement element = doc.createElement("BlockBegin_Widget");
+    QDomElement element = doc.createElement("FCBeginWidget");
     QString line;
     domElement.appendChild(element);
 
@@ -322,14 +321,14 @@ QDomElement MainWindow::codeToXML(QString text, QDomDocument &doc, QDomElement &
             QString tag;
             if (vector[i].indexOf("cin") != -1) {
                 vector[i] = vector[i].replace(0, 6, "");
-                tag = "BlockInput_Widget";
+                tag = "FCInputWidget";
             }
             else if (vector[i].indexOf("cout") != -1) {
                 vector[i] = vector[i].replace(0, 7, "");
-                tag = "BlockOutput_Widget";
+                tag = "FCOutputWidget";
             }
             else {
-                tag = "BlockAction_Widget";
+                tag = "FCActionWidget";
             }
             QDomAttr attr = doc.createAttribute("text");
             line = vector[i];
@@ -340,11 +339,11 @@ QDomElement MainWindow::codeToXML(QString text, QDomDocument &doc, QDomElement &
             domElement.appendChild(element);
         }
     }
-    element = doc.createElement("BlockEnd_Widget");
+    element = doc.createElement("FCEndWidget");
     domElement.appendChild(element);
     return domElement;
 }
-
+*/
 /*
 void MainWindow::saveSlot()
 {
@@ -542,40 +541,40 @@ void MainWindow::XMLtoCode(QTextStream &text, QDomNode &node, int num_of_spaces)
                 if (domElement.tagName() == "Left" || domElement.tagName() == "Right"
                        || domElement.tagName() == "Body") XMLtoCode(text, domElement, num_of_spaces);
 
-                if (domElement.tagName() != "Line_Widget" && domElement.tagName() != "Left" &&
+                if (domElement.tagName() != "FCLine" && domElement.tagName() != "Left" &&
                     domElement.tagName() != "Right" && domElement.tagName() != "Body") {
 
                     QString line = domElement.attribute("text");
 
-                    if (domElement.tagName() == "BlockBegin_Widget") {
+                    if (domElement.tagName() == "FCBeginWidget") {
                         if (openFromNewLine) text << endl << "{" << endl;
                         else text << " {" << endl;
                     }
-                    else if (domElement.tagName() == "BlockAction_Widget") text << space + line + ";" << endl;
-                    else if (domElement.tagName() == "BlockInput_Widget") text << space + "cin >> " + line_stream(line.toStdString(), true) + ";" << endl;
-                    else if (domElement.tagName() == "BlockOutput_Widget") text << space + "cout << " + line_stream(line.toStdString(), false) + ";" << endl;
-                    else if (domElement.tagName() == "Divar_Widget") {
+                    else if (domElement.tagName() == "FCActionWidget") text << space + line + ";" << endl;
+                    else if (domElement.tagName() == "FCInputWidget") text << space + "cin >> " + line_stream(line.toStdString(), true) + ";" << endl;
+                    else if (domElement.tagName() == "FCOutputWidget") text << space + "cout << " + line_stream(line.toStdString(), false) + ";" << endl;
+                    else if (domElement.tagName() == "FCDivarWidget") {
                         text << space + "if (" + line + ")";
                         if (openFromNewLine) text << endl << space + "{" << endl;
                         else text << " {" << endl;
                         XMLtoCode(text, domElement, num_of_spaces + 5);
                         text << space + "}" << endl;
                     }
-                    else if (domElement.tagName() == "Prefix_Cycle") {
+                    else if (domElement.tagName() == "FCPrefixCycleWidget") {
                         text << space + "while (" + line + ")";
                         if (openFromNewLine) text << endl << space + "{" << endl;
                         else text << " {" << endl;
                         XMLtoCode(text, domElement, num_of_spaces + 5);
                         text << space + "}" << endl;
                     }
-                    else if (domElement.tagName() == "Postfix_Cycle") {
+                    else if (domElement.tagName() == "FCPostfixCycleWidget") {
                         text << space + "do";
                         if (openFromNewLine) text << endl << space + "{" << endl;
                         else text << " {" << endl;
                         XMLtoCode(text, domElement, num_of_spaces + 5);
                         text << space + "} while (" + line + ");" << endl;
                     }
-                    else if (domElement.tagName() == "Parameter_Cycle") {
+                    else if (domElement.tagName() == "FCParameterCycleWidget") {
                         text << space + "for (" + line + ")";
                         if (openFromNewLine) text << endl << space + "{" << endl;
                         else text << " {" << endl;
@@ -583,7 +582,7 @@ void MainWindow::XMLtoCode(QTextStream &text, QDomNode &node, int num_of_spaces)
                         text << space + "}" << endl;
                     }
 
-                    else if (domElement.tagName() == "BlockEnd_Widget") text << "}" << endl;
+                    else if (domElement.tagName() == "FCEndWidget") text << "}" << endl;
                 }
             }
             if (domElement.tagName() == "Left") {
@@ -604,7 +603,7 @@ void MainWindow::XMLtoCode(QTextStream &text, QDomNode &node, int num_of_spaces)
     }
 }
 
-void MainWindow::closeEvent(QCloseEvent *event) //Обработчик закрытия приложения
+void MainWindow::closeEvent(QCloseEvent *) //Обработчик закрытия приложения
 {
     //if (theoryBrowser != NULL) theoryBrowser->close();
     /*
@@ -757,7 +756,7 @@ void MainWindow::saveSourceCode()
         QDir::currentPath(), "*.txt", &sFilter);
     if (!Name.isEmpty()) {
         QString text = ui->textEdit->toPlainText();
-        QString sEnding = QString::fromUtf8(Name.toStdString().substr(Name.length() - 4, 4).c_str());
+        QString sEnding = QString::fromLocal8Bit(Name.toStdString().substr(Name.length() - 4, 4).c_str());
         //qDebug()<<sEnding;
         std::ofstream out;
         if (sEnding.contains(".txt")) out.open(Name.toStdString().c_str());
@@ -821,15 +820,15 @@ void MainWindow::showTheory()
     }
 
 }
-
+/*
 void MainWindow::changeFunctionName(QString name)
 {
-    /*QString sEnding = QString::fromStdString(name.toStdString().substr(name.length() - 4, 4).c_str());
+    QString sEnding = QString::fromStdString(name.toStdString().substr(name.length() - 4, 4).c_str());
     if (sEnding.contains(".xml"))
         name = QString::fromStdString(name.toStdString().substr(0, name.length()-4).c_str());
-    completer->setName(name);*/
-}
-
+    completer->setName(name);
+}*/
+/*
 void MainWindow::translateBack()
 {
     qDebug()<<"LOL";
@@ -872,7 +871,7 @@ void MainWindow::translateBack()
     //setWindowTitle(name);
 
 }
-
+*/
 void MainWindow::loadFile(const QString &fileName) //Открытие файла
 {
     QFile file(fileName);

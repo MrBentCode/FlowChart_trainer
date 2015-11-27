@@ -19,7 +19,7 @@ void ToCenter(QWidget *widget)
     }
 }
 
-BlockBegin_Widget::BlockBegin_Widget(QWidget *parent): Block_Widget(parent)
+FCBeginWidget::FCBeginWidget(QWidget *parent): FCWidget(parent)
 {
     resize(100, 50);
     setFixedWidth(100);
@@ -28,12 +28,12 @@ BlockBegin_Widget::BlockBegin_Widget(QWidget *parent): Block_Widget(parent)
     setText("Начало");
 }
 
-BlockBegin_Widget::~BlockBegin_Widget()
+FCBeginWidget::~FCBeginWidget()
 {
 
 }
 
-void BlockBegin_Widget::paintEvent(QPaintEvent *)
+void FCBeginWidget::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
@@ -45,7 +45,7 @@ void BlockBegin_Widget::paintEvent(QPaintEvent *)
 }
 
 
-BlockEnd_Widget::BlockEnd_Widget(QWidget *parent): Block_Widget(parent)
+FCEndWidget::FCEndWidget(QWidget *parent): FCWidget(parent)
 {
     resize(100, 50);
     setFixedWidth(100);
@@ -54,12 +54,12 @@ BlockEnd_Widget::BlockEnd_Widget(QWidget *parent): Block_Widget(parent)
     setText("Конец");
 }
 
-BlockEnd_Widget::~BlockEnd_Widget()
+FCEndWidget::~FCEndWidget()
 {
 
 }
 
-void BlockEnd_Widget::paintEvent(QPaintEvent *)
+void FCEndWidget::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
@@ -70,7 +70,7 @@ void BlockEnd_Widget::paintEvent(QPaintEvent *)
     painter.end();
 }
 
-BlockAction_Widget::BlockAction_Widget(QWidget *parent, QString text): Block_Widget(parent)
+FCActionWidget::FCActionWidget(QWidget *parent, QString text): FCWidget(parent)
 {
     setDefaultText("Действие");
     setLine(false);
@@ -81,20 +81,20 @@ BlockAction_Widget::BlockAction_Widget(QWidget *parent, QString text): Block_Wid
     setFixedHeight(50);
     setContentsMargins(0,0,0,0);
     connect(this, SIGNAL(clicked()), SLOT(block_clicked()));
-    //connect(this, SIGNAL(modified()), (Block_Widget*)parentWidget(), SLOT(ChildModified()));
+    //connect(this, SIGNAL(modified()), (FCWidget*)parentWidget(), SLOT(ChildModified()));
 }
 
-BlockAction_Widget::~BlockAction_Widget()
+FCActionWidget::~FCActionWidget()
 {
     /*
-    if (parentWidget()->inherits("Block_Widget")) {
-        Block_Widget *wid = (Block_Widget*)parentWidget();
+    if (parentWidget()->inherits("FCWidget")) {
+        FCWidget *wid = (FCWidget*)parentWidget();
         wid->ChildModified();
     }
     */
 }
 
-void BlockAction_Widget::paintEvent(QPaintEvent *)
+void FCActionWidget::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
@@ -110,13 +110,13 @@ void BlockAction_Widget::paintEvent(QPaintEvent *)
     painter.end();
 }
 
-Line_Widget::Line_Widget(QWidget *parent): Block_Widget(parent)
+FCLine::FCLine(QWidget *parent): FCWidget(parent)
 {
     ForceArrow = false;
-    Block_Widget *A = (Block_Widget*)parentWidget();
-    Block_Widget *B = (Block_Widget*)A->parentWidget();
+    FCWidget *A = (FCWidget*)parentWidget();
+    FCWidget *B = (FCWidget*)A->parentWidget();
     QString name = B->metaObject()->className();
-    if (name == "Postfix_Cycle") ForceArrow = true;
+    if (name == "FCPostfixCycleWidget") ForceArrow = true;
     setLine(true);
     resize(100, 50);
     setFixedWidth(100);
@@ -125,25 +125,25 @@ Line_Widget::Line_Widget(QWidget *parent): Block_Widget(parent)
     //setMouseTracking(true);
 }
 
-Line_Widget::~Line_Widget()
+FCLine::~FCLine()
 {
 
 }
 
-bool Line_Widget::isArrow()
+bool FCLine::isArrow()
 {
     bool arrow = false;
     if (ForceArrow) return true;
 
     int index = this->parentWidget()->layout()->indexOf(this);
     if (this->parentWidget()->layout()->count()>index+1) {
-        Block_Widget *wid = (Block_Widget*)this->parentWidget()->layout()->itemAt(index+1)->widget();
+        FCWidget *wid = (FCWidget*)this->parentWidget()->layout()->itemAt(index+1)->widget();
         arrow = !(wid->isLineBlock());
     }
     return arrow;
 }
 
-void Line_Widget::paintEvent(QPaintEvent *)
+void FCLine::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
@@ -158,45 +158,45 @@ void Line_Widget::paintEvent(QPaintEvent *)
     painter.end();
 }
 
-void Line_Widget::enterEvent(QEvent *)
+void FCLine::enterEvent(QEvent *)
 { 
     isUnderCursor = true;
     this->repaint();
 }
 
-void Line_Widget::leaveEvent(QEvent *)
+void FCLine::leaveEvent(QEvent *)
 {  
     isUnderCursor = false;
     this->repaint();
 }
 
-void Line_Widget::mousePressEvent(QMouseEvent *)
+void FCLine::mousePressEvent(QMouseEvent *)
 {
 
     emit clicked(this);
 }
 
-void Line_Widget::lineclicked(Line_Widget *object)
+void FCLine::lineclicked(FCLine *object)
 {
     QVBoxLayout *layout;
-    Block_Widget *widget = (Block_Widget*)object->parentWidget();
+    FCWidget *widget = (FCWidget*)object->parentWidget();
     layout = (QVBoxLayout*)object->parentWidget()->layout();
     int index = layout->indexOf(object) + 1;
     widget->createBlock(index);
     /*
-    if (ObjectToFill == action) layout->insertWidget(layout->indexOf(object)+1, new BlockAction_Widget(widget));
-    else if (ObjectToFill == input) layout->insertWidget(layout->indexOf(object)+1, new BlockInput_Widget(widget));
-    else if (ObjectToFill == output) layout->insertWidget(layout->indexOf(object)+1, new BlockOutput_Widget(widget));
-    else if (ObjectToFill == divar) layout->insertWidget(layout->indexOf(object)+1, new Divar_Widget(widget));
-    else if (ObjectToFill == prefix) layout->insertWidget(layout->indexOf(object)+1, new Prefix_Cycle(widget));
-    else if (ObjectToFill == postfix) layout->insertWidget(layout->indexOf(object)+1, new Postfix_Cycle(widget));
-    else if (ObjectToFill == parameter) layout->insertWidget(layout->indexOf(object)+1, new Parameter_Cycle(widget));
+    if (ObjectToFill == action) layout->insertWidget(layout->indexOf(object)+1, new FCActionWidget(widget));
+    else if (ObjectToFill == input) layout->insertWidget(layout->indexOf(object)+1, new FCInputWidget(widget));
+    else if (ObjectToFill == output) layout->insertWidget(layout->indexOf(object)+1, new FCOutputWidget(widget));
+    else if (ObjectToFill == divar) layout->insertWidget(layout->indexOf(object)+1, new FCDivarWidget(widget));
+    else if (ObjectToFill == prefix) layout->insertWidget(layout->indexOf(object)+1, new FCPrefixCycleWidget(widget));
+    else if (ObjectToFill == postfix) layout->insertWidget(layout->indexOf(object)+1, new FCPostfixCycleWidget(widget));
+    else if (ObjectToFill == parameter) layout->insertWidget(layout->indexOf(object)+1, new FCParameterCycleWidget(widget));
     if (ObjectToFill == action || ObjectToFill == input || ObjectToFill == output ||
              ObjectToFill == divar || ObjectToFill == prefix || ObjectToFill == postfix || ObjectToFill == parameter)
     {
-        Line_Widget *line = new Line_Widget(widget);
+        FCLine *line = new FCLine(widget);
         layout->insertWidget(layout->indexOf(object) + 2, line);
-        connect(line, SIGNAL(clicked(Line_Widget*)), line, SLOT(lineclicked(Line_Widget*)));
+        connect(line, SIGNAL(clicked(FCLine*)), line, SLOT(lineclicked(FCLine*)));
     }
     //SetNewSize(widget);
     widget->UpdateSize();
@@ -205,7 +205,7 @@ void Line_Widget::lineclicked(Line_Widget *object)
 }
 
 
-BlockInput_Widget::BlockInput_Widget(QWidget *parent, QString text): Block_Widget(parent)
+FCInputWidget::FCInputWidget(QWidget *parent, QString text): FCWidget(parent)
 {
     setDefaultText("Ввод");
     setText(text);
@@ -218,12 +218,12 @@ BlockInput_Widget::BlockInput_Widget(QWidget *parent, QString text): Block_Widge
     connect(this, SIGNAL(clicked()), SLOT(block_clicked()));
 }
 
-BlockInput_Widget::~BlockInput_Widget()
+FCInputWidget::~FCInputWidget()
 {
 
 }
 
-void BlockInput_Widget::paintEvent(QPaintEvent *)
+void FCInputWidget::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
     painter.fillRect(QRect(this->rect()), Qt::white);
@@ -244,7 +244,7 @@ void BlockInput_Widget::paintEvent(QPaintEvent *)
 }
 
 
-BlockOutput_Widget::BlockOutput_Widget(QWidget *parent, QString text): Block_Widget(parent)
+FCOutputWidget::FCOutputWidget(QWidget *parent, QString text): FCWidget(parent)
 {
     setDefaultText("Вывод");
     setText(text);
@@ -257,12 +257,12 @@ BlockOutput_Widget::BlockOutput_Widget(QWidget *parent, QString text): Block_Wid
     connect(this, SIGNAL(clicked()), SLOT(block_clicked()));
 }
 
-BlockOutput_Widget::~BlockOutput_Widget()
+FCOutputWidget::~FCOutputWidget()
 {
 
 }
 
-void BlockOutput_Widget::paintEvent(QPaintEvent *)
+void FCOutputWidget::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
     painter.fillRect(QRect(this->rect()), Qt::white);
@@ -283,31 +283,31 @@ void BlockOutput_Widget::paintEvent(QPaintEvent *)
 }
 
 
-Divar_Widget::Divar_Widget(QWidget *parent, QString text): Block_Widget(parent)
+FCDivarWidget::FCDivarWidget(QWidget *parent, QString text): FCWidget(parent)
 {
     setLine(false);
     setToDelete(false);
     setToDialog(false);
 
-    Divar = new Decision_Widget(this, text);
-    Yes = new Block_Widget(this);
-    No = new Block_Widget(this);
+    Divar = new FCDecisionWidget(this, text);
+    Yes = new FCWidget(this);
+    No = new FCWidget(this);
     UPLayout = new QHBoxLayout();
     HLayout = new QHBoxLayout();
     VLayout = new QVBoxLayout();
-    lline = new LeftLine(this);
-    rline = new RightLine(this);
-    bline = new BottomLine(this);
-    decision = new MultyColumn(this);
-    doing = new MultyColumn(this);
+    lline = new FCLeftLine(this);
+    rline = new FCRightLine(this);
+    bline = new FCBottomLine(this);
+    decision = new FCColumn(this);
+    doing = new FCColumn(this);
     LLayout = new QVBoxLayout();
     RLayout = new QVBoxLayout();
 
-    Line_Widget *line1 = new Line_Widget(No);
-    Line_Widget *line2 = new Line_Widget(Yes);
-    Line_Widget *line3 = new Line_Widget(No);
-    Line_Widget *line4 = new Line_Widget(Yes);
-    Block_Widget *centralWidget = new Block_Widget(this);
+    FCLine *line1 = new FCLine(No);
+    FCLine *line2 = new FCLine(Yes);
+    FCLine *line3 = new FCLine(No);
+    FCLine *line4 = new FCLine(Yes);
+    FCWidget *centralWidget = new FCWidget(this);
     centralWidget->setFixedWidth(100);
     centralWidget->setContentsMargins(0, 0, 0, 0);
 
@@ -343,10 +343,10 @@ Divar_Widget::Divar_Widget(QWidget *parent, QString text): Block_Widget(parent)
     HLayout->addWidget(Yes);
 
     LLayout->insertWidget(0, line1);
-    LLayout->insertWidget(1, new BlockAction_Widget(No));
+    LLayout->insertWidget(1, new FCActionWidget(No));
     LLayout->insertWidget(2, line3);
     RLayout->insertWidget(0, line2);
-    RLayout->insertWidget(1, new BlockAction_Widget(Yes));
+    RLayout->insertWidget(1, new FCActionWidget(Yes));
     RLayout->insertWidget(2, line4);
 
     HLayout->itemAt(1)->setAlignment(Qt::AlignCenter);
@@ -358,30 +358,30 @@ Divar_Widget::Divar_Widget(QWidget *parent, QString text): Block_Widget(parent)
     LLayout->setSpacing(0);
     RLayout->setSpacing(0);
 
-    connect(line1, SIGNAL(clicked(Line_Widget*)), line1, SLOT(lineclicked(Line_Widget*)));
-    connect(line2, SIGNAL(clicked(Line_Widget*)), line2, SLOT(lineclicked(Line_Widget*)));
-    connect(line3, SIGNAL(clicked(Line_Widget*)), line3, SLOT(lineclicked(Line_Widget*)));
-    connect(line4, SIGNAL(clicked(Line_Widget*)), line4, SLOT(lineclicked(Line_Widget*)));
+    connect(line1, SIGNAL(clicked(FCLine*)), line1, SLOT(lineclicked(FCLine*)));
+    connect(line2, SIGNAL(clicked(FCLine*)), line2, SLOT(lineclicked(FCLine*)));
+    connect(line3, SIGNAL(clicked(FCLine*)), line3, SLOT(lineclicked(FCLine*)));
+    connect(line4, SIGNAL(clicked(FCLine*)), line4, SLOT(lineclicked(FCLine*)));
  }
 
-Divar_Widget::~Divar_Widget()
+FCDivarWidget::~FCDivarWidget()
 {
 
 }
 
-void Divar_Widget::UpdateSize()
+void FCDivarWidget::UpdateSize()
 {
     //qDebug()<<doing->height();
     resize(doing->width(), 100+doing->height());
-    if (parentWidget()->inherits("Block_Widget")) ((Block_Widget*)parentWidget())->UpdateSize();
+    if (parentWidget()->inherits("FCWidget")) ((FCWidget*)parentWidget())->UpdateSize();
 
     int margin = 0;
     margin = No->GetMaxWidth()/2;
-    LeftLine *left = (LeftLine*)decision->layout()->itemAt(0)->widget();
+    FCLeftLine *left = (FCLeftLine*)decision->layout()->itemAt(0)->widget();
     left->margin = margin;
     bline->marginLeft = margin;
     margin = Yes->GetMaxWidth()/2;
-    RightLine *right = (RightLine*)decision->layout()->itemAt(2)->widget();
+    FCRightLine *right = (FCRightLine*)decision->layout()->itemAt(2)->widget();
     right->margin = margin;
     bline->marginRight = margin;
     left->repaint();
@@ -390,27 +390,27 @@ void Divar_Widget::UpdateSize()
     //emit(modified());
 }
 
-int Divar_Widget::GetMaxWidth()
+int FCDivarWidget::GetMaxWidth()
 {
     return No->GetMaxWidth()+100+Yes->GetMaxWidth();
 }
 
-QString Divar_Widget::getText()
+QString FCDivarWidget::getText()
 {
     return Divar->getText();
 }
 
-Block_Widget *Divar_Widget::getLeftLine()
+FCWidget *FCDivarWidget::getLeftLine()
 {
     return No;
 }
 
-Block_Widget *Divar_Widget::getRightLine()
+FCWidget *FCDivarWidget::getRightLine()
 {
     return Yes;
 }
 
-void Divar_Widget::paintEvent(QPaintEvent *)
+void FCDivarWidget::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
     painter.fillRect(QRect(this->rect()), Qt::white);
@@ -427,13 +427,13 @@ void Divar_Widget::paintEvent(QPaintEvent *)
     painter.end();
 }
 
-void Divar_Widget::mousePressEvent(QMouseEvent *)
+void FCDivarWidget::mousePressEvent(QMouseEvent *)
 {
 
 }
 
 
-Decision_Widget::Decision_Widget(QWidget *parent, QString text, bool isPrefix): Block_Widget(parent)
+FCDecisionWidget::FCDecisionWidget(QWidget *parent, QString text, bool isPrefix): FCWidget(parent)
 {
     this->isPrefix = isPrefix;
     setDefaultText("Решение");
@@ -447,12 +447,12 @@ Decision_Widget::Decision_Widget(QWidget *parent, QString text, bool isPrefix): 
     connect(this, SIGNAL(clicked()), SLOT(block_clicked()));
 }
 
-Decision_Widget::~Decision_Widget()
+FCDecisionWidget::~FCDecisionWidget()
 {
 
 }
 
-void Decision_Widget::paintEvent(QPaintEvent *)
+void FCDecisionWidget::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
@@ -471,9 +471,9 @@ void Decision_Widget::paintEvent(QPaintEvent *)
     painter.end();
 }
 
-void Decision_Widget::block_clicked()
+void FCDecisionWidget::block_clicked()
 {
-    Block_Widget* parent = (Block_Widget*)parentWidget()->parentWidget();
+    FCWidget* parent = (FCWidget*)parentWidget()->parentWidget();
     parent->setToDialog(true);
     parent->repaint();
     InputDialog* pInputDialog = new InputDialog(getText());
@@ -489,9 +489,9 @@ void Decision_Widget::block_clicked()
 
     if (isToDelete()) {
         int index = 0;
-        Block_Widget *widget = (Block_Widget*)this->parentWidget()->parentWidget()->parentWidget();
+        FCWidget *widget = (FCWidget*)this->parentWidget()->parentWidget()->parentWidget();
         if (isPrefix) {
-            widget = (Block_Widget*)widget->parentWidget();
+            widget = (FCWidget*)widget->parentWidget();
             index = widget->layout()->indexOf(this->parentWidget()->parentWidget()->parentWidget());
         }
         else index = widget->layout()->indexOf(this->parentWidget()->parentWidget());
@@ -506,99 +506,99 @@ void Decision_Widget::block_clicked()
 }
 
 
-void Block_Widget::mousePressEvent(QMouseEvent *)
+void FCWidget::mousePressEvent(QMouseEvent *)
 {
     emit(clicked());
 }
 
-void Block_Widget::setText(QString str)
+void FCWidget::setText(QString str)
 {
     text = str;
 }
 
-void Block_Widget::setDefaultText(QString str)
+void FCWidget::setDefaultText(QString str)
 {
     defaultText = str;
 }
 
-void Block_Widget::setLine(bool expression)
+void FCWidget::setLine(bool expression)
 {
     isLine = expression;
 }
 
-void Block_Widget::setToDelete(bool expression)
+void FCWidget::setToDelete(bool expression)
 {
     isCheckedToDelete = expression;
 }
 
-void Block_Widget::setToDialog(bool expression)
+void FCWidget::setToDialog(bool expression)
 {
     isCheckedToDialog = expression;
 }
 
-bool Block_Widget::isLineBlock()
+bool FCWidget::isLineBlock()
 {
     return isLine;
 }
 
-bool Block_Widget::isToDelete()
+bool FCWidget::isToDelete()
 {
     return isCheckedToDelete;
 }
 
-bool Block_Widget::isToDialog()
+bool FCWidget::isToDialog()
 {
     return isCheckedToDialog;
 }
 
-Block_Widget::Block_Widget(QWidget *parent): QWidget(parent)
+FCWidget::FCWidget(QWidget *parent): QWidget(parent)
 {
     setLine(false);
     setToDelete(false);
     /*
-    if (parentWidget()->inherits("Block_Widget"))
-        connect(this, SIGNAL(modified()), (Block_Widget*)parentWidget(), SLOT(ChildModified()));
+    if (parentWidget()->inherits("FCWidget"))
+        connect(this, SIGNAL(modified()), (FCWidget*)parentWidget(), SLOT(ChildModified()));
         */
 }
 
-Block_Widget::~Block_Widget()
+FCWidget::~FCWidget()
 {
     /*
-    if (parentWidget()->inherits("Block_Widget")) {
-        Block_Widget *wid = (Block_Widget*)parentWidget();
+    if (parentWidget()->inherits("FCWidget")) {
+        FCWidget *wid = (FCWidget*)parentWidget();
         wid->ChildModified();
     }
     */
 }
 
-void Block_Widget::UpdateSize()
+void FCWidget::UpdateSize()
 {
     //qDebug()<<"modified";
-    //if (!parentWidget()->inherits("Block_Widget")) //emit(modified());
+    //if (!parentWidget()->inherits("FCWidget")) //emit(modified());
     //qDebug()<<"modified again";
     int w = 0, h = 0;
     QVBoxLayout* layout = (QVBoxLayout*)this->layout();
     int i = 0;
     while (i < layout->count()) {
-        Block_Widget *wid = (Block_Widget*)layout->itemAt(i)->widget();
+        FCWidget *wid = (FCWidget*)layout->itemAt(i)->widget();
         i++;
         if (wid->width() > w) w = wid->width();
         h += wid->height();
     }
-    if (!parentWidget()->inherits("Block_Widget")){
+    if (!parentWidget()->inherits("FCWidget")){
         h+=18;
         w+=18;
     }
 
-    //if (parentWidget()->inherits("Block_Widget")) w+=50;
+    //if (parentWidget()->inherits("FCWidget")) w+=50;
     resize(w, h);
     setFixedHeight(h);
     //qDebug()<<"Block height = "<<height();
-    if (parentWidget()->inherits("Block_Widget")) ((Block_Widget*)parentWidget())->UpdateSize();
+    if (parentWidget()->inherits("FCWidget")) ((FCWidget*)parentWidget())->UpdateSize();
 
 }
 
-int Block_Widget::GetMaxWidth()
+int FCWidget::GetMaxWidth()
 {
     int w = 0;
     QVBoxLayout* layout = (QVBoxLayout*)this->layout();
@@ -608,7 +608,7 @@ int Block_Widget::GetMaxWidth()
         else {
             int i = 0;
             while (i < layout->count()) {
-                Block_Widget *wid = (Block_Widget*)layout->itemAt(i)->widget();
+                FCWidget *wid = (FCWidget*)layout->itemAt(i)->widget();
                 i++;
                 if (wid->GetMaxWidth() > w) w = wid->GetMaxWidth();
             }
@@ -617,42 +617,42 @@ int Block_Widget::GetMaxWidth()
     }
 }
 
-std::string Block_Widget::returnTag()
+std::string FCWidget::returnTag()
 {
     return metaObject()->className();
 }
 
-QString Block_Widget::getText()
+QString FCWidget::getText()
 {
     return text;
 }
 
-QString Block_Widget::getDefaultText()
+QString FCWidget::getDefaultText()
 {
     return defaultText;
 }
 
-void Block_Widget::createBlock(int index)
+void FCWidget::createBlock(int index)
 {
-    Block_Widget *block;
-    if (ObjectToFill == action) block = new BlockAction_Widget(this);
-    else if (ObjectToFill == input) block = new BlockInput_Widget(this);
-    else if (ObjectToFill == output) block = new BlockOutput_Widget(this);
-    else if (ObjectToFill == divar) block = new Divar_Widget(this);
-    else if (ObjectToFill == prefix) block = new Prefix_Cycle(this);
-    else if (ObjectToFill == postfix) block = new Postfix_Cycle(this);
-    else if (ObjectToFill == parameter) block = new Parameter_Cycle(this);
+    FCWidget *block;
+    if (ObjectToFill == action) block = new FCActionWidget(this);
+    else if (ObjectToFill == input) block = new FCInputWidget(this);
+    else if (ObjectToFill == output) block = new FCOutputWidget(this);
+    else if (ObjectToFill == divar) block = new FCDivarWidget(this);
+    else if (ObjectToFill == prefix) block = new FCPrefixCycleWidget(this);
+    else if (ObjectToFill == postfix) block = new FCPostfixCycleWidget(this);
+    else if (ObjectToFill == parameter) block = new FCParameterCycleWidget(this);
     addBlock(index, block);
 }
 
-void Block_Widget::addBlock(int index, Block_Widget *widget, bool withLine)
+void FCWidget::addBlock(int index, FCWidget *widget, bool withLine)
 {
     QVBoxLayout *layout = (QVBoxLayout*)this->layout();
     layout->insertWidget(index, widget);
     if (withLine) {
-        Line_Widget *line = new Line_Widget(this);
+        FCLine *line = new FCLine(this);
         layout->insertWidget(index + 1, line);
-        connect(line, SIGNAL(clicked(Line_Widget*)), line, SLOT(lineclicked(Line_Widget*)));
+        connect(line, SIGNAL(clicked(FCLine*)), line, SLOT(lineclicked(FCLine*)));
     }
 
 
@@ -663,63 +663,63 @@ void Block_Widget::addBlock(int index, Block_Widget *widget, bool withLine)
 }
 
 /*
-void Block_Widget::ChildModified()
+void FCWidget::ChildModified()
 {
-    if (parentWidget()->inherits("Block_Widget")) {
-        Block_Widget *wid = (Block_Widget*)parentWidget();
+    if (parentWidget()->inherits("FCWidget")) {
+        FCWidget *wid = (FCWidget*)parentWidget();
         wid->ChildModified();
     }
     else //emit(modified());
 }
 */
 
-void Block_Widget::ClickedAction()
+void FCWidget::ClickedAction()
 {
     ObjectToFill = action;
 }
 
-void Block_Widget::ClickedInput()
+void FCWidget::ClickedInput()
 {
     ObjectToFill = input;
 }
 
-void Block_Widget::ClickedOutput()
+void FCWidget::ClickedOutput()
 {
     ObjectToFill = output;
 }
 
-void Block_Widget::ClickedDivar()
+void FCWidget::ClickedDivar()
 {
     ObjectToFill = divar;
 }
 
-void Block_Widget::ClickedPrefix()
+void FCWidget::ClickedPrefix()
 {
     ObjectToFill = prefix;
 }
 
-void Block_Widget::ClickedPostfix()
+void FCWidget::ClickedPostfix()
 {
     ObjectToFill = postfix;
 }
 
-void Block_Widget::ClickedParameter()
+void FCWidget::ClickedParameter()
 {
     ObjectToFill = parameter;
 }
 
-void Block_Widget::HideTexts(bool toHide)
+void FCWidget::HideTexts(bool toHide)
 {
     hideTexts = toHide;
     repaint();
 }
 
-void Block_Widget::DeleteBlock()
+void FCWidget::DeleteBlock()
 {
     isCheckedToDelete = true;
 }
 
-void Block_Widget::block_clicked()
+void FCWidget::block_clicked()
 {
     InputDialog* pInputDialog = new InputDialog(text);
     connect(pInputDialog->pcmdDelete, SIGNAL(clicked()), SLOT(DeleteBlock()));
@@ -731,7 +731,7 @@ void Block_Widget::block_clicked()
     repaint();
     //qDebug()<<parentWidget()->metaObject()->className();
     if (isCheckedToDelete) {
-        Block_Widget *widget = (Block_Widget*)this->parentWidget();
+        FCWidget *widget = (FCWidget*)this->parentWidget();
         int index = widget->layout()->indexOf(this);
         delete widget->layout()->itemAt(index+1)->widget();
         delete this;
@@ -742,7 +742,7 @@ void Block_Widget::block_clicked()
 }
 
 
-LeftLine::LeftLine(QWidget *parent, bool bottom): Block_Widget(parent)
+FCLeftLine::FCLeftLine(QWidget *parent, bool bottom): FCWidget(parent)
 {
     isBottom = bottom;
     setLine(true);
@@ -753,7 +753,7 @@ LeftLine::LeftLine(QWidget *parent, bool bottom): Block_Widget(parent)
     setContentsMargins(0,0,0,0);
 }
 
-void LeftLine::paintEvent(QPaintEvent *)
+void FCLeftLine::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
@@ -771,7 +771,7 @@ void LeftLine::paintEvent(QPaintEvent *)
 }
 
 
-RightLine::RightLine(QWidget *parent, bool bottom, bool back, bool arrow): Block_Widget(parent)
+FCRightLine::FCRightLine(QWidget *parent, bool bottom, bool back, bool arrow): FCWidget(parent)
 {
     isBottom = bottom;
     isBack = back;
@@ -783,7 +783,7 @@ RightLine::RightLine(QWidget *parent, bool bottom, bool back, bool arrow): Block
     setContentsMargins(0,0,0,0);
 }
 
-void RightLine::paintEvent(QPaintEvent *)
+void FCRightLine::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
@@ -807,7 +807,7 @@ void RightLine::paintEvent(QPaintEvent *)
 }
 
 
-BottomLine::BottomLine(QWidget *parent, bool left): QWidget(parent)
+FCBottomLine::FCBottomLine(QWidget *parent, bool left): QWidget(parent)
 {
     isLeftSide = left;
     marginLeft = 50;
@@ -818,9 +818,9 @@ BottomLine::BottomLine(QWidget *parent, bool left): QWidget(parent)
     setContentsMargins(0,0,0,0);
 }
 
-BottomLine::~BottomLine(){}
+FCBottomLine::~FCBottomLine(){}
 
-void BottomLine::paintEvent(QPaintEvent *)
+void FCBottomLine::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
@@ -837,58 +837,58 @@ void BottomLine::paintEvent(QPaintEvent *)
 }
 
 
-MultyColumn::MultyColumn(QWidget *parent): Block_Widget(parent)
+FCColumn::FCColumn(QWidget *parent): FCWidget(parent)
 {
 
 }
 
-void MultyColumn::UpdateSize()
+void FCColumn::UpdateSize()
 {
     int w = 0, h = 0;
     QVBoxLayout* layout = (QVBoxLayout*)this->layout();
     int i = 0;
     while (i < layout->count()) {
-        Block_Widget *wid = (Block_Widget*)layout->itemAt(i)->widget();
+        FCWidget *wid = (FCWidget*)layout->itemAt(i)->widget();
         i++;
         if (wid->height() > h) h = wid->height();
         w += wid->width();
     }
     resize(w, h);
     //qDebug()<<"Column height = "<<height();
-    if (parentWidget()->inherits("Block_Widget")) ((Block_Widget*)parentWidget())->UpdateSize();
+    if (parentWidget()->inherits("FCWidget")) ((FCWidget*)parentWidget())->UpdateSize();
     //emit(modified());
 }
 
-Prefix_Cycle::Prefix_Cycle(QWidget *parent, QString text): Block_Widget(parent)
+FCPrefixCycleWidget::FCPrefixCycleWidget(QWidget *parent, QString text): FCWidget(parent)
 {
     setLine(true);
     setToDelete(false);
     setToDialog(false);
 
-    Cycle = new Decision_Widget(this, text, true);
-    Yes = new Block_Widget(this);
-    No = new Block_Widget(this);
+    Cycle = new FCDecisionWidget(this, text, true);
+    Yes = new FCWidget(this);
+    No = new FCWidget(this);
     UPLayout = new QVBoxLayout();
     UPLayout1 = new QHBoxLayout();
     UPLayout2 = new QHBoxLayout();
     HLayout = new QHBoxLayout();
     VLayout = new QVBoxLayout();
-    lline = new LeftLine(this);
-    rline = new RightLine(this, false, true);
-    lbline = new LeftLine(this, true);
-    rbline = new RightLine(this, true);
-    bline = new BottomLine(this, true);
-    decision = new MultyColumn(this);
-    doing = new MultyColumn(this);
+    lline = new FCLeftLine(this);
+    rline = new FCRightLine(this, false, true);
+    lbline = new FCLeftLine(this, true);
+    rbline = new FCRightLine(this, true);
+    bline = new FCBottomLine(this, true);
+    decision = new FCColumn(this);
+    doing = new FCColumn(this);
     Layout = new QVBoxLayout();
-    cross = new CrossLine_Widget(this, true);
-    top1 = new Block_Widget(this);
-    top2 = new Block_Widget(this);
-    top1left = new Block_Widget(this);
-    top2right = new Block_Widget(this);
+    cross = new FCCrossLine(this, true);
+    top1 = new FCWidget(this);
+    top2 = new FCWidget(this);
+    top1left = new FCWidget(this);
+    top2right = new FCWidget(this);
 
-    Line_Widget *line1 = new Line_Widget(this);
-    Line_Widget *line2 = new Line_Widget(this);
+    FCLine *line1 = new FCLine(this);
+    FCLine *line2 = new FCLine(this);
 
     top1->resize(300, 50);
     top2->resize(300, 50);
@@ -937,7 +937,7 @@ Prefix_Cycle::Prefix_Cycle(QWidget *parent, QString text): Block_Widget(parent)
     VLayout->addWidget(doing);
     VLayout->addWidget(bline);
     Layout->insertWidget(0, line1);
-    Layout->insertWidget(1, new BlockAction_Widget(this));
+    Layout->insertWidget(1, new FCActionWidget(this));
     Layout->insertWidget(2, line2);
     Layout->insertWidget(3, lbline);
 
@@ -951,17 +951,17 @@ Prefix_Cycle::Prefix_Cycle(QWidget *parent, QString text): Block_Widget(parent)
     HLayout->setSpacing(0);
     Layout->setSpacing(0);
 
-    connect(line1, SIGNAL(clicked(Line_Widget*)), line1, SLOT(lineclicked(Line_Widget*)));
-    connect(line2, SIGNAL(clicked(Line_Widget*)), line2, SLOT(lineclicked(Line_Widget*)));
+    connect(line1, SIGNAL(clicked(FCLine*)), line1, SLOT(lineclicked(FCLine*)));
+    connect(line2, SIGNAL(clicked(FCLine*)), line2, SLOT(lineclicked(FCLine*)));
 
 }
 
-Prefix_Cycle::~Prefix_Cycle()
+FCPrefixCycleWidget::~FCPrefixCycleWidget()
 {
 
 }
 
-void Prefix_Cycle::paintEvent(QPaintEvent *)
+void FCPrefixCycleWidget::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
     painter.fillRect(QRect(this->rect()), Qt::white);
@@ -976,7 +976,7 @@ void Prefix_Cycle::paintEvent(QPaintEvent *)
     painter.end();
 }
 
-void Prefix_Cycle::UpdateSize()
+void FCPrefixCycleWidget::UpdateSize()
 {
     //qDebug()<<"cycle update size "<<Yes->GetMaxWidth();
     lbline->resize(100, 50);
@@ -989,7 +989,7 @@ void Prefix_Cycle::UpdateSize()
     decision->resize(w, 50);
     decision->setFixedWidth(w);
 
-    if (parentWidget()->inherits("Block_Widget")) ((Block_Widget*)parentWidget())->UpdateSize();
+    if (parentWidget()->inherits("FCWidget")) ((FCWidget*)parentWidget())->UpdateSize();
 
 
     lbline->resize(Yes->GetMaxWidth(), 50);
@@ -998,23 +998,23 @@ void Prefix_Cycle::UpdateSize()
     //emit(modified());
 }
 
-int Prefix_Cycle::GetMaxWidth()
+int FCPrefixCycleWidget::GetMaxWidth()
 {
     return Yes->GetMaxWidth() + 200;
 }
 
-QString Prefix_Cycle::getText()
+QString FCPrefixCycleWidget::getText()
 {
     return Cycle->getText();
 }
 
-Block_Widget *Prefix_Cycle::getCycleBody()
+FCWidget *FCPrefixCycleWidget::getCycleBody()
 {
     return Yes;
 }
 
 
-CrossLine_Widget::CrossLine_Widget(QWidget *parent, bool SetArrow): Block_Widget(parent)
+FCCrossLine::FCCrossLine(QWidget *parent, bool SetArrow): FCWidget(parent)
 {
     isArrow = SetArrow;
     setLine(true);
@@ -1024,12 +1024,12 @@ CrossLine_Widget::CrossLine_Widget(QWidget *parent, bool SetArrow): Block_Widget
     setContentsMargins(0, 0, 0, 0);
 }
 
-CrossLine_Widget::~CrossLine_Widget()
+FCCrossLine::~FCCrossLine()
 {
 
 }
 
-void CrossLine_Widget::paintEvent(QPaintEvent *)
+void FCCrossLine::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
@@ -1047,7 +1047,7 @@ void CrossLine_Widget::paintEvent(QPaintEvent *)
 }
 
 
-Parameter_Widget::Parameter_Widget(QWidget *parent, QString text): Block_Widget(parent)
+FCParameterWidget::FCParameterWidget(QWidget *parent, QString text): FCWidget(parent)
 {
     setDefaultText("Параметр");
     setText(text);
@@ -1060,12 +1060,12 @@ Parameter_Widget::Parameter_Widget(QWidget *parent, QString text): Block_Widget(
     connect(this, SIGNAL(clicked()), SLOT(block_clicked()));
 }
 
-Parameter_Widget::~Parameter_Widget()
+FCParameterWidget::~FCParameterWidget()
 {
 
 }
 
-void Parameter_Widget::paintEvent(QPaintEvent *)
+void FCParameterWidget::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
@@ -1086,9 +1086,9 @@ void Parameter_Widget::paintEvent(QPaintEvent *)
     painter.end();
 }
 
-void Parameter_Widget::block_clicked()
+void FCParameterWidget::block_clicked()
 {
-    Block_Widget* parent = (Block_Widget*)parentWidget()->parentWidget();
+    FCWidget* parent = (FCWidget*)parentWidget()->parentWidget();
     parent->setToDialog(true);
     parent->repaint();
     InputDialog* pInputDialog = new InputDialog(getText());
@@ -1104,7 +1104,7 @@ void Parameter_Widget::block_clicked()
     parent->repaint();
 
     if (isToDelete()) {
-        Block_Widget *widget = (Block_Widget*)this->parentWidget()->parentWidget()->parentWidget();
+        FCWidget *widget = (FCWidget*)this->parentWidget()->parentWidget()->parentWidget();
         int index = widget->layout()->indexOf(this->parentWidget()->parentWidget());
         delete widget->layout()->itemAt(index+1)->widget();
         delete widget->layout()->itemAt(index)->widget();
@@ -1114,30 +1114,30 @@ void Parameter_Widget::block_clicked()
 }
 
 
-Parameter_Cycle::Parameter_Cycle(QWidget *parent, QString text): Block_Widget(parent)
+FCParameterCycleWidget::FCParameterCycleWidget(QWidget *parent, QString text): FCWidget(parent)
 {
     setLine(false);
     setToDelete(false);
     setToDialog(false);
 
-    Cycle = new Parameter_Widget(this, text);
-    Yes = new Block_Widget(this);
-    No = new Block_Widget(this);
+    Cycle = new FCParameterWidget(this, text);
+    Yes = new FCWidget(this);
+    No = new FCWidget(this);
     UPLayout = new QHBoxLayout();
     HLayout = new QHBoxLayout();
     VLayout = new QVBoxLayout();
-    lline = new LeftLine(this);
-    rline = new RightLine(this, false, true, true);
-    lbline = new LeftLine(this, true);
-    rbline = new RightLine(this, true);
-    bline = new BottomLine(this, true);
-    decision = new MultyColumn(this);
-    doing = new MultyColumn(this);
+    lline = new FCLeftLine(this);
+    rline = new FCRightLine(this, false, true, true);
+    lbline = new FCLeftLine(this, true);
+    rbline = new FCRightLine(this, true);
+    bline = new FCBottomLine(this, true);
+    decision = new FCColumn(this);
+    doing = new FCColumn(this);
     Layout = new QVBoxLayout();
 
 
-    Line_Widget *line1 = new Line_Widget(Yes);
-    Line_Widget *line2 = new Line_Widget(Yes);
+    FCLine *line1 = new FCLine(Yes);
+    FCLine *line2 = new FCLine(Yes);
 
 
     Yes->resize(100, 200);
@@ -1172,7 +1172,7 @@ Parameter_Cycle::Parameter_Cycle(QWidget *parent, QString text): Block_Widget(pa
     VLayout->addWidget(doing);
     VLayout->addWidget(bline);
     Layout->insertWidget(0, line1);
-    Layout->insertWidget(1, new BlockAction_Widget(Yes));
+    Layout->insertWidget(1, new FCActionWidget(Yes));
     Layout->insertWidget(2, line2);
     Layout->insertWidget(3, lbline);
 
@@ -1184,17 +1184,17 @@ Parameter_Cycle::Parameter_Cycle(QWidget *parent, QString text): Block_Widget(pa
     HLayout->setSpacing(0);
     Layout->setSpacing(0);
 
-    connect(line1, SIGNAL(clicked(Line_Widget*)), line1, SLOT(lineclicked(Line_Widget*)));
-    connect(line2, SIGNAL(clicked(Line_Widget*)), line2, SLOT(lineclicked(Line_Widget*)));
+    connect(line1, SIGNAL(clicked(FCLine*)), line1, SLOT(lineclicked(FCLine*)));
+    connect(line2, SIGNAL(clicked(FCLine*)), line2, SLOT(lineclicked(FCLine*)));
 
 }
 
-Parameter_Cycle::~Parameter_Cycle()
+FCParameterCycleWidget::~FCParameterCycleWidget()
 {
 
 }
 
-void Parameter_Cycle::paintEvent(QPaintEvent *)
+void FCParameterCycleWidget::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
     painter.fillRect(QRect(this->rect()), Qt::white);
@@ -1209,7 +1209,7 @@ void Parameter_Cycle::paintEvent(QPaintEvent *)
     painter.end();
 }
 
-void Parameter_Cycle::UpdateSize()
+void FCParameterCycleWidget::UpdateSize()
 {
     //qDebug()<<"cycle update size "<<Yes->GetMaxWidth();
     lbline->resize(100, 50);
@@ -1222,7 +1222,7 @@ void Parameter_Cycle::UpdateSize()
     decision->resize(w, 50);
     decision->setFixedWidth(w);
 
-    if (parentWidget()->inherits("Block_Widget")) ((Block_Widget*)parentWidget())->UpdateSize();
+    if (parentWidget()->inherits("FCWidget")) ((FCWidget*)parentWidget())->UpdateSize();
 
 
     lbline->resize(Yes->GetMaxWidth(), 50);
@@ -1231,23 +1231,23 @@ void Parameter_Cycle::UpdateSize()
     //emit(modified());
 }
 
-int Parameter_Cycle::GetMaxWidth()
+int FCParameterCycleWidget::GetMaxWidth()
 {
     return Yes->GetMaxWidth() + 200;
 }
 
-QString Parameter_Cycle::getText()
+QString FCParameterCycleWidget::getText()
 {
     return Cycle->getText();
 }
 
-Block_Widget *Parameter_Cycle::getCycleBody()
+FCWidget *FCParameterCycleWidget::getCycleBody()
 {
     return Yes;
 }
 
 
-Postfix_Cycle::Postfix_Cycle(QWidget *parent, QString text): Block_Widget(parent)
+FCPostfixCycleWidget::FCPostfixCycleWidget(QWidget *parent, QString text): FCWidget(parent)
 {
     setLine(true);
     setToDelete(false);
@@ -1257,18 +1257,18 @@ Postfix_Cycle::Postfix_Cycle(QWidget *parent, QString text): Block_Widget(parent
     HLayout = new QHBoxLayout ;
     VLayout = new QVBoxLayout;
     Layout = new QVBoxLayout;
-    decision = new MultyColumn(this);
-    enter = new MultyColumn(this);
-    cross = new CrossLine_Widget(this);
-    Cycle = new Decision_Widget(this, text);
-    Center = new Block_Widget(this);
-    LeftSideUp = new Block_Widget(this);
-    LeftSideDown = new Block_Widget(this);
-    rline = new RightLine(this, false, true, false);
-    rbline = new RightLine(this, true);
+    decision = new FCColumn(this);
+    enter = new FCColumn(this);
+    cross = new FCCrossLine(this);
+    Cycle = new FCDecisionWidget(this, text);
+    Center = new FCWidget(this);
+    LeftSideUp = new FCWidget(this);
+    LeftSideDown = new FCWidget(this);
+    rline = new FCRightLine(this, false, true, false);
+    rbline = new FCRightLine(this, true);
 
-    Line_Widget *line1 = new Line_Widget(Center);
-    Line_Widget *line2 = new Line_Widget(Center);
+    FCLine *line1 = new FCLine(Center);
+    FCLine *line2 = new FCLine(Center);
 
     enter->resize(300, 50);
     enter->setFixedHeight(50);
@@ -1304,7 +1304,7 @@ Postfix_Cycle::Postfix_Cycle(QWidget *parent, QString text): Block_Widget(parent
     VLayout->addWidget(decision);
 
     Layout->insertWidget(0, line1);
-    Layout->insertWidget(1, new BlockAction_Widget(Center));
+    Layout->insertWidget(1, new FCActionWidget(Center));
     Layout->insertWidget(2, line2);
 
     enter->setLayout(UPLayout);
@@ -1314,16 +1314,16 @@ Postfix_Cycle::Postfix_Cycle(QWidget *parent, QString text): Block_Widget(parent
 
     VLayout->itemAt(1)->setAlignment(Qt::AlignHCenter);
 
-    connect(line1, SIGNAL(clicked(Line_Widget*)), line1, SLOT(lineclicked(Line_Widget*)));
-    connect(line2, SIGNAL(clicked(Line_Widget*)), line2, SLOT(lineclicked(Line_Widget*)));
+    connect(line1, SIGNAL(clicked(FCLine*)), line1, SLOT(lineclicked(FCLine*)));
+    connect(line2, SIGNAL(clicked(FCLine*)), line2, SLOT(lineclicked(FCLine*)));
 }
 
-Postfix_Cycle::~Postfix_Cycle()
+FCPostfixCycleWidget::~FCPostfixCycleWidget()
 {
 
 }
 
-void Postfix_Cycle::paintEvent(QPaintEvent *)
+void FCPostfixCycleWidget::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
     painter.fillRect(QRect(this->rect()), Qt::white);
@@ -1337,7 +1337,7 @@ void Postfix_Cycle::paintEvent(QPaintEvent *)
     painter.end();
 }
 
-void Postfix_Cycle::UpdateSize()
+void FCPostfixCycleWidget::UpdateSize()
 {
     int maxw = Center->GetMaxWidth();
     int w = maxw + 200;
@@ -1349,21 +1349,21 @@ void Postfix_Cycle::UpdateSize()
     enter->resize(w, 50);
     decision->resize(w, 50);
     resize(w, h);
-    if (parentWidget()->inherits("Block_Widget")) ((Block_Widget*)parentWidget())->UpdateSize();
+    if (parentWidget()->inherits("FCWidget")) ((FCWidget*)parentWidget())->UpdateSize();
     //emit(modified());
 }
 
-int Postfix_Cycle::GetMaxWidth()
+int FCPostfixCycleWidget::GetMaxWidth()
 {
     return Center->GetMaxWidth() + 200;
 }
 
-QString Postfix_Cycle::getText()
+QString FCPostfixCycleWidget::getText()
 {
     return Cycle->getText();
 }
 
-Block_Widget *Postfix_Cycle::getCycleBody()
+FCWidget *FCPostfixCycleWidget::getCycleBody()
 {
     return Center;
 }

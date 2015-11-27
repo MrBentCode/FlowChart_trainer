@@ -27,17 +27,17 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    //void saveFlowChart(Block_Widget *fc);
-    QDomElement getBlocks(const Block_Widget *fc, QDomDocument &doc, QString Name = "flowchart");
+    //void saveFlowChart(FCWidget *fc);
+    QDomElement getBlocks(const FCWidget *fc, QDomDocument &doc, QString Name = "flowchart");
     void makeFlowChart();
-    void loadFlowChart(Block_Widget *widget, QDomNode &node, bool isMain = false, bool delBottom = true);
+    void loadFlowChart(FCWidget *widget, QDomNode &node, bool isMain = false, bool delBottom = true);
     bool isCorrectedPunctuation();
-    QDomElement codeToXML(QString text, QDomDocument &doc, QDomElement &domElement, QVector<QString> vector);
+    //QDomElement codeToXML(QString text, QDomDocument &doc, QDomElement &domElement, QVector<QString> vector);
 public slots:
     //void saveSlot();
 
 protected:
-    void closeEvent(QCloseEvent *event);
+    void closeEvent(QCloseEvent *);
 
 private slots:
     void onRadioButtonCheck();
@@ -57,13 +57,13 @@ private slots:
     void startExercise();
     void endExercise();
     void showTheory();
-    void changeFunctionName(QString name);
-    void translateBack();
+    //void changeFunctionName(QString name);
+    //void translateBack();
 
 private:
     bool pressed;
     bool isToShowCode;
-    Block_Widget *wdg;
+    FCWidget *wdg;
     QVBoxLayout *fcvLayout;
     Ui::MainWindow *ui;
     TestWindow *test;
