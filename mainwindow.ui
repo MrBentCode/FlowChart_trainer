@@ -341,6 +341,20 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QPushButton" name="compilerButton">
+         <property name="text">
+          <string>Собрать</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="runButton">
+         <property name="text">
+          <string>Запустить</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
     </item>
@@ -353,6 +367,13 @@
        </sizepolicy>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QCheckBox" name="checkBoxMath">
+         <property name="text">
+          <string>Подключать cmath</string>
+         </property>
+        </widget>
+       </item>
        <item>
         <widget class="QCheckBox" name="checkBox_newLine">
          <property name="text">
@@ -394,6 +415,9 @@
           <enum>QTextEdit::NoWrap</enum>
          </property>
         </widget>
+       </item>
+       <item>
+        <widget class="QTextBrowser" name="textBrowser"/>
        </item>
       </layout>
      </widget>

@@ -105,7 +105,7 @@ void FCActionWidget::paintEvent(QPaintEvent *)
     int mleft = 20;
     if (text_length > 8) mleft -= 5;
     if (text_length > 12) mleft -= 10;
-    if (hideTexts) painter.drawText(QPoint(mleft, 20), getDefaultText());
+    if (hideTexts) painter.drawText(QPoint(20, 20), getDefaultText());
     else painter.drawText(QPoint(mleft, 20), getText());
     painter.end();
 }
@@ -238,7 +238,7 @@ void FCInputWidget::paintEvent(QPaintEvent *)
     int mleft = 20;
     if (text_length > 8) mleft -= 5;
     if (text_length > 12) mleft -= 10;
-    if (hideTexts) painter.drawText(QPoint(mleft, 20), getDefaultText());
+    if (hideTexts) painter.drawText(QPoint(20, 20), getDefaultText());
     else painter.drawText(QPoint(mleft, 20), getDefaultText() + " " + getText());
     painter.end();
 }
@@ -277,7 +277,7 @@ void FCOutputWidget::paintEvent(QPaintEvent *)
     int mleft = 20;
     if (text_length > 8) mleft -= 5;
     if (text_length > 12) mleft -= 10;
-    if (hideTexts) painter.drawText(QPoint(mleft, 20), getDefaultText());
+    if (hideTexts) painter.drawText(QPoint(20, 20), getDefaultText());
     else painter.drawText(QPoint(mleft, 20), getDefaultText() + " " + getText());
     painter.end();
 }
@@ -466,7 +466,7 @@ void FCDecisionWidget::paintEvent(QPaintEvent *)
     int mleft = 20;
     if (text_length > 8) mleft -= 5;
     if (text_length > 12) mleft -= 5;
-    if (hideTexts) painter.drawText(QPoint(mleft, 25), getDefaultText());
+    if (hideTexts) painter.drawText(QPoint(20, 25), getDefaultText());
     else painter.drawText(QPoint(mleft, 25), getText());
     painter.end();
 }
@@ -1081,7 +1081,7 @@ void FCParameterWidget::paintEvent(QPaintEvent *)
     int mleft = 20;
     if (text_length > 8) mleft -= 5;
     if (text_length > 12) mleft -= 5;
-    if (hideTexts) painter.drawText(QPoint(mleft, 25), getDefaultText());
+    if (hideTexts) painter.drawText(QPoint(20, 25), getDefaultText());
     else painter.drawText(QPoint(mleft, 25), getText());
     painter.end();
 }

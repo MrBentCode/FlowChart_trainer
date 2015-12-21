@@ -14,6 +14,7 @@
 #include "testwindow.h"
 #include "exercisewindow.h"
 //#include "qwordcompleter.h"
+#include <QProcess>
 
 namespace Ui {
 class MainWindow;
@@ -57,6 +58,8 @@ private slots:
     void startExercise();
     void endExercise();
     void showTheory();
+    void build();
+    void buildAndRun();
     //void changeFunctionName(QString name);
     //void translateBack();
 
@@ -72,6 +75,7 @@ private:
     QTextBrowser *theoryBrowser;
     QString theory;
     QString html;
+    QString programName;
     //QWordCompleter* completer;
     QVector<QRadioButton *> radioButtons;
 

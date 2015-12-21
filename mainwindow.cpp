@@ -5,6 +5,8 @@
 #include <QTextCodec>
 #include <fstream>
 #include <iostream>
+#include <windows.h>
+#include <QFile>
 
 QString line_stream(std::string tempLine, bool in){
     QString str;
@@ -118,6 +120,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->radio_param_cycle, SIGNAL(released()), this, SLOT(onRadioButtonCheck()));
     connect(ui->radio_postfix_cycle, SIGNAL(released()), this, SLOT(onRadioButtonCheck()));
     connect(ui->radio_prefix_cycle, SIGNAL(released()), this, SLOT(onRadioButtonCheck()));
+    connect(ui->compilerButton, SIGNAL(clicked()), SLOT(build()));
+    connect(ui->runButton, SIGNAL(clicked()), SLOT(buildAndRun()));
+
 }
 
 void MainWindow::onRadioButtonCheck() {
@@ -819,6 +824,96 @@ void MainWindow::showTheory()
         theoryBrowser->show();
     }
 
+}
+
+void MainWindow::build()
+{
+    translate();
+    QProcess process;
+    QString appPath = QApplication::applicationDirPath();
+    appPath.replace("/", "\\");
+    /*
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    env.insert("TMPDIR", appPath+"\\temp"); // Add an environment variable
+    env.insert("PATH", env.value("Path") + ";" + appPath+"\\mingw32\\bin");
+    process.setProcessEnvironment(env);*/
+    //QString url = QApplication::applicationDirPath() + "/mingw32/bin/g++";
+    QString url = QApplication::applicationDirPath();
+
+
+    QString fileName = windowTitle();
+    qDebug()<<fileName;
+    if (fileName.toStdString().substr(fileName.length()-4, 4) == ".xml"){
+        qDebug()<<"that";
+        fileName = QString::fromStdString(fileName.toStdString().substr(0, fileName.length()-4));
+    }
+    qDebug()<<fileName;
+    programName = fileName + ".exe";
+    QString string_include = "#include <iostream>\n#include <windows.h>";
+    if (ui->checkBoxMath->isChecked()) string_include += "\n#include <cmath>";
+    QString string_using = "using namespace std;";
+    QString string_algorithm = ui->textEdit->toPlainText();
+    QString string_functionName = fileName + "();";
+    QString string_mainFunction = "int main(){\n\tSetConsoleCP(CP_UTF8);\n\tSetConsoleOutputCP(CP_UTF8);\n\t"
+            +string_functionName+"\n\tsystem(\"Pause\");\n\treturn 0;\n}";
+
+    fileName += ".cpp";
+    QString logFileName = "compileroutput.txt";
+    QString compilerParameters = "-static -static-libgcc -finput-charset=UTF-8 -g -Wall -o "
+            + programName + " "
+            + fileName + " 2> "
+            + logFileName;
+    QString forBatEncoding = "chcp 65001";
+    QString forBatPath = "SET PATH=%PATH%;"
+            + appPath + "\\mingw32\\bin\\";
+    QString forBatBuild = "g++ " + compilerParameters;
+    QString batFileName = "build.bat";
+
+    std::ofstream outBat;
+    outBat.open(batFileName.toStdString().c_str());
+    outBat << forBatEncoding.toStdString() << std::endl <<
+              forBatPath.toStdString() << std::endl << forBatBuild.toStdString();
+    outBat.close();
+    /*QFile out;
+    out.setFileName(fileName);
+    out.write((string_include + "\n" +
+              string_using + "\n" +
+              string_algorithm + "\n" +
+              string_mainFunction).toUtf8());
+    out.close();*/
+
+    std::ofstream output;
+    output.open(fileName.toStdString().c_str());
+    output << string_include.toStdString() << std::endl <<
+              string_using.toStdString() << std::endl <<
+              string_algorithm.toStdString() << std::endl <<
+              string_mainFunction.toStdString();
+    output.close();
+
+
+    process.startDetached(url + "/build.bat");
+    Sleep(3000);
+    ui->textBrowser->clear();
+    std::ifstream input;
+    input.open(logFileName.toStdString().c_str());
+    if (input.is_open()){
+        std::string line;
+        while (!input.eof()) {
+            std::getline(input, line);
+            ui->textBrowser->append(QString::fromStdString(line));
+        }
+        input.close();
+    }
+
+}
+
+void MainWindow::buildAndRun()
+{
+    build();
+    if (ui->textBrowser->toPlainText().length() == 0){
+        QProcess process;
+        process.startDetached(QApplication::applicationDirPath() + "/" + programName);
+    }
 }
 /*
 void MainWindow::changeFunctionName(QString name)
