@@ -417,6 +417,13 @@
         </widget>
        </item>
        <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Ошибки сборки:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QTextBrowser" name="textBrowser"/>
        </item>
       </layout>

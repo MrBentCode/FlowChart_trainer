@@ -13,11 +13,18 @@ QString line_stream(std::string tempLine, bool in){
     //std::string tempLine = line.toStdString();
     std::string tempStr = tempLine;
     int n = 0;
-    while (tempLine.find(",") > 0 && tempLine.find(",") < tempLine.size()){
-        n = tempLine.find(",");
-        if (in) tempStr = tempLine.replace(n, 1, " >>");
-        else tempStr = tempLine.replace(n, 1, " <<");
+    int m = -1;
+    m = tempStr.find("\"");
+    //qDebug()<<QString::number(m);
+    if (!(m >= 0 && m < tempStr.length()) || in) {
+        //qDebug()<<"WELL";
+        while (tempLine.find(",") > 0 && tempLine.find(",") < tempLine.size()){
+            n = tempLine.find(",");
+            if (in) tempStr = tempLine.replace(n, 1, " >>");
+            else tempStr = tempLine.replace(n, 1, " <<");
+        }
     }
+
     str = QString::fromStdString(tempStr);
     return str;
 }
