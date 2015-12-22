@@ -891,8 +891,10 @@ void MainWindow::build()
     output.close();
 
 
-    process.startDetached(url + "/build.bat");
-    Sleep(3000);
+    //process.startDetached("cmd.exe /C" + appPath + "\\build.bat");
+    process.execute("cmd.exe /C " + appPath + "\\build.bat");
+    process.waitForFinished(-1);
+    //Sleep(3000);
     ui->textBrowser->clear();
     std::ifstream input;
     input.open(logFileName.toStdString().c_str());
